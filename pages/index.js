@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function Home() {
@@ -44,7 +45,7 @@ export default function Home() {
       <br />
       <br />
       <div>
-        <button>Register</button>
+        <Link href="/register">Register</Link>
       </div>
       <div>
         <button>Log in</button>
