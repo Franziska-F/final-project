@@ -1,8 +1,13 @@
+import { useRouter } from 'next/router';
+import { stringify } from 'querystring';
 import { useState } from 'react';
+import { RegisterResponseBody } from './api/register';
 
 export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<{ message: string }[]>([]);
+  const router = useRouter();
 
   async function registerHandler() {
     const registerResponse = await fetch('/api/register', {
@@ -15,7 +20,17 @@ export default function Register() {
         password: password,
       }),
     });
-    const registerResponseBody = await registerResponse.json();
+    const registerResponseBody: RegisterResponseBody =
+      await registerResponse.json();
+
+    if ('errors' in registerResponseBody) {
+      setErrors(registerResponseBody.errors);
+      return;
+    }
+
+    // redirect user to home
+
+    await router.push('/');
   }
 
   return (
@@ -46,6 +61,11 @@ export default function Register() {
       </div>
       <div>
         <button onClick={() => registerHandler()}>Register</button>
+        {errors.length
+          ? errors.map((error) => (
+              <span key={`error-${error.message}`}>{error.message}</span>
+            ))
+          : ''}
       </div>
     </div>
   );
