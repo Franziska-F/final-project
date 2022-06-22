@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { LoginResponseBody } from './api/login';
 
@@ -5,6 +6,8 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
+
+  const router = useRouter();
 
   async function loginHandler() {
     const loginResponse = await fetch('/api/login', {
@@ -23,6 +26,22 @@ export default function Login() {
     if ('errors' in loginResponseBody) {
       setErrors(loginResponseBody.errors);
       return;
+    }
+    const returnTo = router.query.returnTo;
+
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      // Security: Validate returnTo parameter against valid path
+      // (because this is untrusted user input)
+      /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
+    ) {
+      await router.push(returnTo); // home
+    } else {
+      // redirect user to user profile
+      // if you want to use userProfile with username redirect to /users/username
+      console.log(loginResponseBody);
+      await router.push(`/users/${loginResponseBody.user.id}`);
     }
   }
 

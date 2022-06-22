@@ -28,7 +28,7 @@ function connectOneTimeToDatabase() {
 }
 const sql = connectOneTimeToDatabase();
 
-type User = {
+export type User = {
   id: number;
   username: string;
 };
@@ -56,6 +56,20 @@ export async function getUserByUserName(username: string) {
       users
     WHERE
       username = ${username}
+  `;
+  return user;
+}
+
+export async function getUserById(userId: number) {
+  if (!userId) return undefined;
+  const [user] = await sql<[User | undefined]>`
+    SELECT
+      id,
+      username
+    FROM
+      users
+    WHERE
+      id = ${userId}
   `;
   return user;
 }
