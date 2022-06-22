@@ -48,7 +48,7 @@ export default function Home() {
         <Link href="/register">Register</Link>
       </div>
       <div>
-        <button>Log in</button>
+        <Link href="/login">Login</Link>
       </div>
       {/* }
       https://www.googleapis.com/books/v1/volumes?q=intitle:der%20fremd+inauthor:camus {*/}
