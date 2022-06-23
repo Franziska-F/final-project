@@ -10,6 +10,7 @@
     "migrate": "dotenv ley"
   },
   "dependencies": {
+    "@emotion/react": "^11.9.3",
     "bcrypt": "^5.0.1",
     "cookie": "^0.5.0",
     "dotenv": "^16.0.1",

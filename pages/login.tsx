@@ -40,8 +40,8 @@ export default function Login() {
     } else {
       // redirect user to user profile
       // if you want to use userProfile with username redirect to /users/username
-      console.log(loginResponseBody);
-      await router.push(`/users/${loginResponseBody.user.id}`);
+
+      await router.push(`/users/userProfile`);
     }
   }
 

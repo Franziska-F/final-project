@@ -10,7 +10,7 @@ export default function Register() {
   // const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [country, setCountry] = useState('');
-  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
 
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
@@ -24,6 +24,9 @@ export default function Register() {
       body: JSON.stringify({
         username: username,
         password: password,
+        email: email,
+        country: country,
+        city: city,
       }),
     });
     const registerResponseBody: RegisterResponseBody =
@@ -91,9 +94,9 @@ export default function Register() {
         <label>
           <input
             placeholder="Location"
-            value={location}
+            value={city}
             onChange={(event) => {
-              setLocation(event.currentTarget.value);
+              setCity(event.currentTarget.value);
             }}
           />
         </label>{' '}

@@ -1,5 +1,6 @@
 import { config } from 'dotenv';
 import postgres from 'postgres';
+import { checkServerIdentity } from 'tls';
 
 config();
 // Type needed for the connection function below
@@ -66,6 +67,33 @@ session_token
   return session;
 }
 
+type UserProfile = {
+  id: number;
+  session_token: string;
+  email: 'string';
+  country: 'string';
+  city: 'string';
+};
+export async function createUserProfile(
+  user_id: User['id'],
+  email: 'string',
+  country: 'string',
+  city: 'string',
+  // timestamp is created by default
+) {
+  const [userProfil] = await sql<[UserProfile]>`INSERT INTO
+userProfiles (user_id, email, country, city)
+VALUES
+(${user_id}, ${email}, ${country}, ${city})
+RETURNING
+id,
+email,
+country,
+city
+`;
+  return userProfil;
+}
+
 export async function getUserByUserName(username: string) {
   if (!username) return undefined;
   const [user] = await sql<[User | undefined]>`
@@ -105,5 +133,18 @@ export async function getUserWithPasswordHash(username: string) {
     WHERE
       username = ${username}
   `;
+  return user;
+}
+
+export async function getUserBySessionToken(sessionToken: string) {
+  if (!sessionToken) return undefined;
+
+  const [user] = await sql<[User | undefined]>`
+  SELECT
+  users.id,
+  users.username
+  FROM
+  users, sessions WHERE sessions.session_token = ${sessionToken} AND sessions.user_id = users.id AND sessions.expiry_timestamp > now();`;
+
   return user;
 }

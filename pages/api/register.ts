@@ -1,6 +1,10 @@
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { createUser, getUserByUserName } from '../../util/database';
+import {
+  createUser,
+  createUserProfile,
+  getUserByUserName,
+} from '../../util/database';
 
 // type of response is either object with an error property that contains an array of objects with messages or user id
 export type RegisterResponseBody =
@@ -42,7 +46,7 @@ export default async function handler(
     // get user name
 
     const username = user.username;
-    console.log(req.body.username);
+    console.log(req.body);
 
     // hash the password
 
@@ -51,7 +55,13 @@ export default async function handler(
     // create new user in DB
     const newUser = await createUser(req.body.username, passwordHash);
 
-    console.log(newUser);
+    const newUserProfil = await createUserProfile(
+      newUser.id,
+      user.email,
+      user.country,
+      user.city,
+    );
+
     res.status(200).json({
       user: {
         id: newUser.id,

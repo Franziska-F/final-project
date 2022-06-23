@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { setRevalidateHeaders } from 'next/dist/server/send-payload';
-import { serializedSessionTokenCookie } from '../../util/cookis';
+import { serializedSessionTokenCookie } from '../../util/cookies';
 import { createSession, getUserWithPasswordHash } from '../../util/database';
 
 // type of response is either object with an error property that contains an array of objects with messages or user id
@@ -67,7 +67,7 @@ export default async function handler(
       session.session_token,
     );
 
-    // if you want to use username as identifier return the username too
+    // tells browser to create die cookie
     res
       .status(200)
       .setHeader('set-Cookie', serializedCookie)

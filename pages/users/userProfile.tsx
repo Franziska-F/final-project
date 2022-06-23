@@ -1,5 +1,5 @@
 import { GetServerSidePropsContext } from 'next';
-import { getUserById, User } from '../../util/database';
+import { getUserBySessionToken, User } from '../../util/database';
 
 type Props = {
   user?: User;
@@ -46,23 +46,19 @@ export default function UserProfil(props: Props) {
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // getting userId from url
+  const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
-  const userIdFromUrl = context.query.userId;
-
-  if (!userIdFromUrl || Array.isArray(userIdFromUrl)) {
-    return { props: {} };
-  }
-
-  const user = await getUserById(parseInt(userIdFromUrl));
-
-  if (!user) {
-    context.res.statusCode = 404;
-    return { props: {} };
+  if (user) {
+    return {
+      props: {
+        user: user,
+      },
+    };
   }
   return {
-    props: {
-      user: user,
+    redirect: {
+      destination: `/login?returnTo=/users/userProfile`,
+      permanent: false,
     },
   };
 }
