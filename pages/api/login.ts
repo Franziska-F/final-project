@@ -1,6 +1,9 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getUserWithPasswordHash } from '../../util/database';
+import { setRevalidateHeaders } from 'next/dist/server/send-payload';
+import { serializedSessionTokenCookie } from '../../util/cookis';
+import { createSession, getUserWithPasswordHash } from '../../util/database';
 
 // type of response is either object with an error property that contains an array of objects with messages or user id
 export type LoginResponseBody =
@@ -37,6 +40,7 @@ export default async function handler(
       });
       return;
     }
+    console.log(userWithPasswordHash);
 
     // cehck if entered password matches the password hash
 
@@ -55,9 +59,19 @@ export default async function handler(
     const userId = userWithPasswordHash.id;
 
     // TODO: create a session for this user
+    const sessionToken = crypto.randomBytes(80).toString('base64');
+
+    const session = await createSession(userId, sessionToken);
+
+    const serializedCookie = await serializedSessionTokenCookie(
+      session.session_token,
+    );
 
     // if you want to use username as identifier return the username too
-    res.status(200).json({ user: { id: userId } });
+    res
+      .status(200)
+      .setHeader('set-Cookie', serializedCookie)
+      .json({ user: { id: userId } });
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }

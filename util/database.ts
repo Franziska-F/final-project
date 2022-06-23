@@ -46,6 +46,26 @@ username
   return user;
 }
 
+type Session = {
+  id: number;
+  session_token: string;
+};
+export async function createSession(
+  user_id: User['id'],
+  session_token: 'string',
+  // timestamp is created by default
+) {
+  const [session] = await sql<[Session]>`INSERT INTO
+sessions (user_id, session_token)
+VALUES
+(${user_id}, ${session_token})
+RETURNING
+id,
+session_token
+`;
+  return session;
+}
+
 export async function getUserByUserName(username: string) {
   if (!username) return undefined;
   const [user] = await sql<[User | undefined]>`

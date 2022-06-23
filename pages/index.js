@@ -8,8 +8,8 @@ export default function Home() {
     fetch(`https://www.googleapis.com/books/v1/volumes?q=intitle:${bookTitle}`)
       .then((res) =>
         res.json().then((response) => {
-          const bookInfo = response.items[0].volumeInfo;
-          console.log(response.items[0].volumeInfo);
+          const bookInfo = response.items;
+          console.log(response.items);
           setResult(bookInfo);
         }),
       )
@@ -33,13 +33,22 @@ export default function Home() {
         <button onClick={handleSearch}>Search</button>
       </div>
       <div>
-        {' '}
-        <p>{result.title}</p>
-        <p>{result.authors}</p>
-        <img
-          src={result.imageLinks ? result.imageLinks.thumbnail : '/'}
-          alt={result.imageLinks ? 'bookcover' : 'No cover'}
-        />
+        {result.map((item) => {
+          return (
+            <div key={item.id}>
+              <p>{item.volumeInfo.title}</p>
+              <p>{item.volumeInfo.authors[0]}</p>
+              <img
+                src={
+                  item.volumeInfo.imageLinks !== undefined
+                    ? item.volumeInfo.imageLinks.thumbnail
+                    : ''
+                }
+                alt="bookcover"
+              />{' '}
+            </div>
+          );
+        })}
       </div>
       <br />
       <br />

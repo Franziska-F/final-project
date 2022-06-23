@@ -6,6 +6,12 @@ import { RegisterResponseBody } from './api/register';
 export default function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  // const [firstName, setFirstName] = useState('');
+  // const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [country, setCountry] = useState('');
+  const [location, setLocation] = useState('');
+
   const [errors, setErrors] = useState<{ message: string }[]>([]);
   const router = useRouter();
 
@@ -55,6 +61,61 @@ export default function Register() {
             value={password}
             onChange={(event) => {
               setPassword(event.currentTarget.value);
+            }}
+          />
+        </label>{' '}
+      </div>
+      {/* }   <div>
+        <label>
+          <input
+            placeholder="First Name"
+            value={firstName}
+            onChange={(event) => {
+              setFirstName(event.currentTarget.value);
+            }}
+          />
+        </label>{' '}
+      </div>
+      <div>
+        <label>
+          <input
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(event) => {
+              setLastName(event.currentTarget.value);
+            }}
+          />
+        </label>{' '}
+          </div> {*/}
+      <div>
+        <label>
+          <input
+            placeholder="Location"
+            value={location}
+            onChange={(event) => {
+              setLocation(event.currentTarget.value);
+            }}
+          />
+        </label>{' '}
+      </div>
+      <div>
+        <label>
+          <input
+            placeholder="country"
+            value={country}
+            onChange={(event) => {
+              setCountry(event.currentTarget.value);
+            }}
+          />
+        </label>{' '}
+      </div>
+      <div>
+        <label>
+          <input
+            placeholder="Email"
+            value={email}
+            onChange={(event) => {
+              setEmail(event.currentTarget.value);
             }}
           />
         </label>{' '}
