@@ -1,7 +1,6 @@
 import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setRevalidateHeaders } from 'next/dist/server/send-payload';
 import { serializedSessionTokenCookie } from '../../util/cookies';
 import { createSession, getUserWithPasswordHash } from '../../util/database';
 

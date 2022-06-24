@@ -39,7 +39,23 @@ export default function Register() {
 
     // redirect user to home
 
-    await router.push('/');
+     const returnTo = router.query.returnTo;
+
+    if (
+      returnTo &&
+      !Array.isArray(returnTo) &&
+      // Security: Validate returnTo parameter against valid path
+      // (because this is untrusted user input)
+      /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
+    ) {
+
+      await router.push(returnTo);
+    } else {
+      // redirect user to user profile
+      // if you want to use userProfile with username redirect to /users/username
+      // await router.push(`/users/${loginResponseBody.user.id}`);
+
+      await router.push(`/`);
   }
 
   return (

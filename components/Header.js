@@ -58,7 +58,7 @@ export default function Header() {
           </li>
           <li>
             {' '}
-            <Link href="/login">Logout</Link>
+            <Link href="/logout">Logout</Link>
           </li>
           <li>
             <Link href="/register">Register</Link>

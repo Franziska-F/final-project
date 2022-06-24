@@ -51,6 +51,7 @@ type Session = {
   id: number;
   session_token: string;
 };
+
 export async function createSession(
   user_id: User['id'],
   session_token: 'string',
@@ -64,6 +65,32 @@ RETURNING
 id,
 session_token
 `;
+  return session;
+}
+
+export async function deleteSession(token: 'string') {
+  const [session] = await sql<[Session]>`
+  DELETE FROM
+sessions
+WHERE
+
+sessions.session_token = ${token}
+
+RETURNING *`;
+
+  return session;
+}
+
+export async function deleteExpiredSessions() {
+  const [session] = await sql<[Session[]]>`
+  DELETE FROM
+sessions
+WHERE
+
+sessions.expiry_timestamp < now()
+
+RETURNING *`;
+
   return session;
 }
 

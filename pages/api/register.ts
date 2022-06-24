@@ -1,6 +1,9 @@
+import crypto from 'node:crypto';
 import bcrypt from 'bcrypt';
 import { NextApiRequest, NextApiResponse } from 'next';
+import { serializedSessionTokenCookie } from '../../util/cookies';
 import {
+  createSession,
   createUser,
   createUserProfile,
   getUserByUserName,
@@ -62,11 +65,19 @@ export default async function handler(
       user.city,
     );
 
-    res.status(200).json({
-      user: {
-        id: newUser.id,
-      },
-    });
+    const sessionToken = crypto.randomBytes(80).toString('base64');
+
+    const session = await createSession(newUser.id, sessionToken);
+
+    const serializedCookie = await serializedSessionTokenCookie(
+      session.session_token,
+    );
+
+    // tells browser to create die cookie
+    res
+      .status(200)
+      .setHeader('set-Cookie', serializedCookie)
+      .json({ user: { id: newUser.id } });
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }
