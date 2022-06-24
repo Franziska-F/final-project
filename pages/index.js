@@ -9,7 +9,7 @@ export default function Home() {
       .then((res) =>
         res.json().then((response) => {
           const bookInfo = response.items;
-          console.log(response.items);
+
           setResult(bookInfo);
         }),
       )
@@ -36,16 +36,18 @@ export default function Home() {
         {result.map((item) => {
           return (
             <div key={item.id}>
-              <p>{item.volumeInfo.title}</p>
-              <p>{item.volumeInfo.authors[0]}</p>
-              <img
-                src={
-                  item.volumeInfo.imageLinks !== undefined
-                    ? item.volumeInfo.imageLinks.thumbnail
-                    : ''
-                }
-                alt="bookcover"
-              />{' '}
+              <a href={`/books/${item.id}`}>
+                <p>{item.volumeInfo.title}</p>
+                <p>{item.volumeInfo.authors}</p>
+                <img
+                  src={
+                    item.volumeInfo.imageLinks !== undefined
+                      ? item.volumeInfo.imageLinks.thumbnail
+                      : ''
+                  }
+                  alt="bookcover"
+                />{' '}
+              </a>
             </div>
           );
         })}
