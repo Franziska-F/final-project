@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { getUserBySessionToken } from '../../util/database';
 
 const wrapper = css`
@@ -8,6 +9,24 @@ const wrapper = css`
 `;
 
 export default function BookDetails(props) {
+  const [review, setReview] = useState('');
+
+  async function createReviewHandler() {
+    const reviewResponse = await fetch('../api/reviews', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: props.user.id,
+        book_id: props.book.id,
+        review: review,
+      }),
+    });
+
+    const reviewResponseBody = await reviewResponse.json();
+    console.log(reviewResponse);
+  }
   if (!props.book) {
     return <h1>Book not found</h1>;
   }
@@ -30,16 +49,22 @@ export default function BookDetails(props) {
         <h2> Write a review </h2>
         <div>
           {props.user ? (
-            <form>
+            <>
+              {' '}
               <label htmlFor="review">
-                <textarea id="review" name="review" rows="10" cols="33">
-                  Write your review here:
-                </textarea>
+                <textarea
+                  id="review"
+                  name="review"
+                  value={review}
+                  onChange={(event) => {
+                    setReview(event.currentTarget.value);
+                  }}
+                />
               </label>
               <div>
-                <input type="submit" value="Submit" />
+                <button onClick={() => createReviewHandler()}>Submit</button>
               </div>
-            </form>
+            </>
           ) : (
             <div>
               <p>Please log in or register to write a review</p>

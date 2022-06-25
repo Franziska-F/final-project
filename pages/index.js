@@ -30,7 +30,7 @@ export default function Home() {
             setBookTitle(title);
           }}
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={() => handleSearch()}>Search</button>
       </div>
       <div>
         {result.map((item) => {

@@ -39,7 +39,6 @@ export default async function handler(
       });
       return;
     }
-    console.log(userWithPasswordHash);
 
     // cehck if entered password matches the password hash
 

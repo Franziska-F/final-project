@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
-import { stringify } from 'querystring';
 import { useState } from 'react';
 import { RegisterResponseBody } from './api/register';
 
-export default function Register() {
+type Props = { displayUserProfile: () => Promise<void> };
+export default function Register(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   // const [firstName, setFirstName] = useState('');
@@ -39,7 +39,7 @@ export default function Register() {
 
     // redirect user to home
 
-     const returnTo = router.query.returnTo;
+    const returnTo = router.query.returnTo;
 
     if (
       returnTo &&
@@ -48,14 +48,14 @@ export default function Register() {
       // (because this is untrusted user input)
       /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
     ) {
-
       await router.push(returnTo);
     } else {
       // redirect user to user profile
       // if you want to use userProfile with username redirect to /users/username
       // await router.push(`/users/${loginResponseBody.user.id}`);
-
+      await props.displayUserProfile();
       await router.push(`/`);
+    }
   }
 
   return (
@@ -84,28 +84,6 @@ export default function Register() {
           />
         </label>{' '}
       </div>
-      {/* }   <div>
-        <label>
-          <input
-            placeholder="First Name"
-            value={firstName}
-            onChange={(event) => {
-              setFirstName(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
-      </div>
-      <div>
-        <label>
-          <input
-            placeholder="Last Name"
-            value={lastName}
-            onChange={(event) => {
-              setLastName(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
-          </div> {*/}
       <div>
         <label>
           <input

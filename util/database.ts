@@ -173,5 +173,32 @@ export async function getUserBySessionToken(sessionToken: string) {
   FROM
   users, sessions WHERE sessions.session_token = ${sessionToken} AND sessions.user_id = users.id AND sessions.expiry_timestamp > now();`;
 
+  await deleteExpiredSessions();
+
   return user;
+}
+
+type UserReview = {
+  id: number;
+  book_id: 'string';
+  review: 'string';
+};
+export async function createReview(
+  user_id: User['id'],
+  book_id: 'string',
+  review: 'string',
+
+  // timestamp is created by default
+) {
+  const [userReview] = await sql<[UserReview]>`INSERT INTO
+reviews (user_id, book_id, review)
+VALUES
+(${user_id}, ${book_id}, ${review})
+RETURNING
+id,
+book_id,
+review
+
+`;
+  return userReview;
 }
