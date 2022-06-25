@@ -2,7 +2,8 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { LoginResponseBody } from './api/login';
 
-export default function Login() {
+type Props = { displayUserProfile: () => Promise<void> };
+export default function Login(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ message: string }[]>([]);
@@ -36,11 +37,12 @@ export default function Login() {
       // (because this is untrusted user input)
       /^\/[a-zA-Z0-9-?=/]*$/.test(returnTo)
     ) {
+      await props.displayUserProfile();
       await router.push(returnTo); // home
     } else {
       // redirect user to user profile
       // if you want to use userProfile with username redirect to /users/username
-
+      await props.displayUserProfile();
       await router.push(`/users/userProfile`);
     }
   }

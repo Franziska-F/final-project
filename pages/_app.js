@@ -1,7 +1,27 @@
 import { css, Global } from '@emotion/react';
+import { useCallback, useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 
 function MyApp({ Component, pageProps }) {
+  const [user, setUser] = useState();
+
+  const displayUserProfile = useCallback(async () => {
+    const profileResponse = await fetch('/api/userDisplay');
+
+    const profileResponseBody = await profileResponse.json();
+
+    if (!('errors' in profileResponseBody)) {
+      setUser(profileResponseBody.user);
+    } else {
+      profileResponseBody.errors.forEach((error) => console.log(error.message));
+      setUser(undefined);
+    }
+  }, []);
+
+  useEffect(() => {
+    displayUserProfile().catch(() => console.log('fetch api failed'));
+  }, [displayUserProfile]);
+
   return (
     <>
       {' '}
@@ -17,8 +37,8 @@ function MyApp({ Component, pageProps }) {
           }
         `}
       />
-      <Layout>
-        <Component {...pageProps} />
+      <Layout user={user}>
+        <Component {...pageProps} displayUserProfile={displayUserProfile} />
       </Layout>
     </>
   );

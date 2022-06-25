@@ -101,7 +101,6 @@ export async function getServerSideProps(context) {
   );
 
   const book = await bookResponse.json();
-  console.log(book);
 
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 

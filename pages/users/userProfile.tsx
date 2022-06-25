@@ -5,7 +5,6 @@ type Props = {
   user?: User;
 };
 export default function UserProfil(props: Props) {
-  console.log(props);
   if (!props.user) {
     return <h1>User not found!</h1>;
   }

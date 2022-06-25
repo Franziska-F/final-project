@@ -39,7 +39,8 @@ const header = css`
   }
 `;
 
-export default function Header() {
+export default function Header(props) {
+  console.log(props.user);
   return (
     <header css={header}>
       <div className="links">
@@ -54,18 +55,25 @@ export default function Header() {
         <ul>
           <li>
             {' '}
-            <Link href="/login">Login</Link>
+            {props.user && (
+              <a href="/users/userProfile"> {props.user.user.username}</a>
+            )}{' '}
           </li>
-          <li>
-            {' '}
-            <Link href="/logout">Logout</Link>
-          </li>
-          <li>
-            <Link href="/register">Register</Link>
-          </li>
-          <li>
-            <Link href="/users/userProfile">Profil</Link>
-          </li>
+          {props.user ? (
+            <li>
+              <a href="/logout">Logout</a>
+            </li>
+          ) : (
+            <>
+              <li>
+                {' '}
+                <Link href="/login">Login</Link>
+              </li>
+              <li>
+                <Link href="/register">Register</Link>
+              </li>{' '}
+            </>
+          )}
         </ul>
       </div>
     </header>
