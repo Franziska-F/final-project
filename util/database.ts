@@ -183,6 +183,9 @@ type UserReview = {
   book_id: 'string';
   review: 'string';
 };
+
+// reviews
+
 export async function createReview(
   user_id: User['id'],
   book_id: 'string',
@@ -201,4 +204,36 @@ review
 
 `;
   return userReview;
+}
+
+export async function getAllReviews() {
+  const reviews = await sql<UserReview[]>`
+  SELECT * FROM reviews`;
+  return reviews;
+}
+
+export async function getReviewsByBookId(bookId: string) {
+  if (!bookId) return undefined;
+  const reviews = await sql`
+    SELECT
+    *
+    FROM
+      reviews
+    WHERE
+      book_id = ${bookId}
+  `;
+  return reviews;
+}
+
+export async function getReviewsByUserId(userId: string) {
+  if (!userId) return undefined;
+  const reviewsOfUser = await sql`
+    SELECT
+    *
+    FROM
+      reviews
+    WHERE
+      user_id = ${userId}
+  `;
+  return reviewsOfUser;
 }

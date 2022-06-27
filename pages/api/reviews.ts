@@ -1,8 +1,15 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import {
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from 'next';
+import { productionBrowserSourceMaps } from '../../next.config';
 import {
   createReview,
+  getAllReviews,
+  getReviewsByBookId,
+  getReviewsByUserId,
   getUserBySessionToken,
-  getUserByUserName,
 } from '../../util/database';
 
 export type ReviewResponseBody = {
@@ -13,6 +20,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ReviewResponseBody>,
 ) {
+  // GET-request to display all reviews at first render
+  const user = await getUserBySessionToken(req.cookies.sessionToken);
+  if (req.method === 'GET') {
+    const allReviewsOfUser = await getReviewsByUserId(user.id);
+
+    return res.status(200).json(allReviewsOfUser);
+  }
+
+  /* const allReviewsForBook = await getAllReviews();
+
+    return res.status(200).json(allReviewsForBook); */
+
   if (typeof req.body.review !== 'string') {
     res.status(400).json({
       errors: [{ message: 'Your review is empty!' }],
@@ -20,13 +39,15 @@ export default async function handler(
     return;
   }
 
+  // POST-method for new user-reviews
+
   if (req.method === 'POST') {
-    console.log(req.body);
     const newReview = await createReview(
       req.body.user_id,
       req.body.book_id,
       req.body.review,
     );
+    return res.status(200).json(newReview);
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }

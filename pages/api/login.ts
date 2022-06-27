@@ -7,6 +7,7 @@ import { createSession, getUserWithPasswordHash } from '../../util/database';
 // type of response is eithr object with an error property that contains an array of objects with messages or user id
 export type LoginResponseBody =
   | {
+    
       errors: { message: string }[];
     }
   | { user: { id: number } };

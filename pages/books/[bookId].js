@@ -1,6 +1,6 @@
 import { css } from '@emotion/react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getUserBySessionToken } from '../../util/database';
 
 const wrapper = css`
@@ -10,6 +10,19 @@ const wrapper = css`
 
 export default function BookDetails(props) {
   const [review, setReview] = useState('');
+  const [reviewsList, setReviewsList] = useState([]);
+
+  useEffect(() => {
+    async function getReviews() {
+      const response = await fetch(`../api/reviews/${props.book.id}`);
+
+      const reviews = await response.json();
+      setReviewsList(reviews);
+    }
+    getReviews().catch(() => {
+      console.log('Reviews request failed');
+    });
+  }, [props.book.id]);
 
   async function createReviewHandler() {
     const reviewResponse = await fetch('../api/reviews', {
@@ -25,7 +38,10 @@ export default function BookDetails(props) {
     });
 
     const reviewResponseBody = await reviewResponse.json();
-    console.log(reviewResponse);
+
+    const updatedReviewsList = [...reviewsList, reviewResponseBody];
+
+    setReviewsList(updatedReviewsList);
   }
   if (!props.book) {
     return <h1>Book not found</h1>;
@@ -62,7 +78,14 @@ export default function BookDetails(props) {
                 />
               </label>
               <div>
-                <button onClick={() => createReviewHandler()}>Submit</button>
+                <button
+                  onClick={() => {
+                    createReviewHandler();
+                    setReview('');
+                  }}
+                >
+                  Submit
+                </button>
               </div>
             </>
           ) : (
@@ -76,9 +99,14 @@ export default function BookDetails(props) {
         <h2> See other Reviews </h2>
         {props.user ? (
           <div>
-            <div>
-              <p>Es war, als hätte der Himmel die Erde still geküsst</p>
-            </div>
+            {reviewsList.map((listItem) => {
+              return (
+                <div key={`review-${listItem.id}`}>
+                  <h4> {listItem.user_id}</h4>
+                  <p>{listItem.review}</p>
+                </div>
+              );
+            })}
           </div>
         ) : (
           <p>
