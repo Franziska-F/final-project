@@ -237,3 +237,16 @@ export async function getReviewsByUserId(userId: string) {
   `;
   return reviewsOfUser;
 }
+// Delete single review by review id
+
+export async function deleteReview(id: number) {
+  const [review] = await sql`
+  DELETE FROM
+    reviews
+  WHERE
+    reviews.id = ${id}
+  RETURNING *
+  `;
+
+  return review;
+}

@@ -19,6 +19,25 @@ export default function UserProfil(props: Props) {
     });
   }, []);
 
+  async function deleteReviewById(bookId, id) {
+    const response = await fetch(`../api/reviews/${bookId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    });
+    const deletedReview = await response.json();
+
+    // copy state
+    // update copy of the state
+    const newState = userReviews.filter((item) => item.id !== deletedReview.id);
+    // use setState func
+    setUserReviews(newState);
+  }
+
   if (!props.user) {
     return <h1>User not found!</h1>;
   }
@@ -38,7 +57,18 @@ export default function UserProfil(props: Props) {
                 <button>Edit</button>
               </div>
               <div>
-                <button>Delete</button>
+                <button
+                  onClick={() => {
+                    console.log(listItem.book_id);
+                    deleteReviewById(listItem.book_id, listItem.id).catch(
+                      () => {
+                        console.log('Delete request fails');
+                      },
+                    );
+                  }}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           );

@@ -1,11 +1,7 @@
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from 'next';
-import { productionBrowserSourceMaps } from '../../next.config';
+import { NextApiRequest, NextApiResponse } from 'next';
 import {
   createReview,
+  deleteReview,
   getAllReviews,
   getReviewsByBookId,
   getReviewsByUserId,
@@ -51,4 +47,6 @@ export default async function handler(
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }
+
+ 
 }
