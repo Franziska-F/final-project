@@ -33,6 +33,7 @@ export default function BookDetails(props) {
       body: JSON.stringify({
         user_id: props.user.id,
         book_id: props.book.id,
+        book_title: props.book.volumeInfo.title,
         review: review,
       }),
     });
@@ -60,6 +61,11 @@ export default function BookDetails(props) {
           }
           alt="bookcover"
         />{' '}
+      </div>
+      <br />
+      <div>
+        {' '}
+        <button>Add to your reading list</button>
       </div>
       <div>
         <h2> Write a review </h2>

@@ -41,12 +41,11 @@ export default async function handler(
     const newReview = await createReview(
       req.body.user_id,
       req.body.book_id,
+      req.body.book_title,
       req.body.review,
     );
     return res.status(200).json(newReview);
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }
-
- 
 }

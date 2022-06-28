@@ -189,17 +189,19 @@ type UserReview = {
 export async function createReview(
   user_id: User['id'],
   book_id: 'string',
+  book_title: 'string',
   review: 'string',
 
   // timestamp is created by default
 ) {
   const [userReview] = await sql<[UserReview]>`INSERT INTO
-reviews (user_id, book_id, review)
+reviews (user_id, book_id, book_title, review)
 VALUES
-(${user_id}, ${book_id}, ${review})
+(${user_id}, ${book_id}, ${book_title}, ${review})
 RETURNING
 id,
 book_id,
+book_title,
 review
 
 `;
@@ -249,4 +251,20 @@ export async function deleteReview(id: number) {
   `;
 
   return review;
+}
+
+// Edit single review by review id
+
+export async function updateReview(id: number, review: string) {
+  const [updatedReview] = await sql`
+  UPDATE
+  reviews
+SET
+review = ${review}
+WHERE
+id = ${id}
+RETURNING
+*
+   `;
+  return updatedReview;
 }

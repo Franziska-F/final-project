@@ -7,6 +7,8 @@ type Props = {
 };
 export default function UserProfil(props: Props) {
   const [userReviews, setUserReviews] = useState([]);
+  const [acitveId, setAktiveId] = useState(undefined);
+  const [editReview, setEditReview] = useState('');
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -19,6 +21,7 @@ export default function UserProfil(props: Props) {
     });
   }, []);
 
+  // Delte reviews
   async function deleteReviewById(bookId, id) {
     const response = await fetch(`../api/reviews/${bookId}`, {
       method: 'DELETE',
@@ -38,6 +41,34 @@ export default function UserProfil(props: Props) {
     setUserReviews(newState);
   }
 
+  // Uptdate reviews
+  async function updateReview(bookId, id, editReview) {
+    const response = await fetch(`../api/reviews/${bookId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: id,
+        review: editReview,
+      }),
+    });
+    const updatedReview = await response.json();
+
+    // copy state
+    // update copy of the state
+    const newState = userReviews.map((item) => {
+      if (item.id === updatedReview.id) {
+        return updatedReview;
+      } else {
+        return item;
+      }
+    });
+
+    // use setState func
+    setUserReviews(newState);
+  }
+
   if (!props.user) {
     return <h1>User not found!</h1>;
   }
@@ -50,16 +81,83 @@ export default function UserProfil(props: Props) {
           return (
             <div key={listItem.id}>
               <div>
-                <h3>{listItem.book_id}</h3>
-                <p>{listItem.review}</p>
-              </div>
-              <div>
-                <button>Edit</button>
+                <h3></h3>
+                <label htmlFor="review">
+                  <textarea
+                    id="review"
+                    name="review"
+                    value={editReview}
+                    onChange={(event) =>
+                      setEditReview(event.currentTarget.value)
+                    }
+
+                    //   onChange={(event) => {
+                    //   setReview(event.currentTarget.value);
+                  />
+                </label>
               </div>
               <div>
                 <button
                   onClick={() => {
-                    console.log(listItem.book_id);
+                    setAktiveId(undefined);
+                    setEditReview(listItem.review);
+                    updateReview(
+                      listItem.book_id,
+                      listItem.id,
+                      editReview,
+                    ).catch(() => {
+                      console.log('Put request fails');
+                    });
+                  }}
+                >
+                  Save
+                </button>
+              </div>
+              <div>
+                <button
+                  onClick={() => {
+                    console.log(listItem.id);
+                    deleteReviewById(listItem.book_id, listItem.id).catch(
+                      () => {
+                        console.log('Delete request fails');
+                      },
+                    );
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+              <div key={listItem.id}>
+                <h3>{listItem.book_title}</h3>
+                <label htmlFor="review">
+                  <textarea
+                    id="review"
+                    name="review"
+                    value={listItem.review}
+                    disabled
+                    onChange={(event) =>
+                      setEditReview(event.currentTarget.value)
+                    }
+
+                    //   onChange={(event) => {
+                    //   setReview(event.currentTarget.value);
+                  />
+                </label>
+                <p></p>
+              </div>
+
+              <div>
+                <button
+                  onClick={() => {
+                    setAktiveId(listItem.id);
+                  }}
+                >
+                  Edit
+                </button>
+              </div>
+              <div>
+                <button
+                  onClick={() => {
                     deleteReviewById(listItem.book_id, listItem.id).catch(
                       () => {
                         console.log('Delete request fails');
@@ -82,6 +180,13 @@ export default function UserProfil(props: Props) {
             <li>Reader 1</li>
             <li>Reader 2</li>
           </ul>
+        </div>
+      </div>
+      <div className="readingList">
+        <h2>Your reading list</h2>
+
+        <div>
+          <h4>Title</h4>
         </div>
       </div>
     </div>
