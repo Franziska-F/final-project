@@ -88,8 +88,7 @@ export default function UserProfil(props: Props) {
                       setEditReview(event.currentTarget.value)
                     }
 
-                    //   onChange={(event) => {
-                    //   setReview(event.currentTarget.value);
+                    
                   />
                 </label>
               </div>
