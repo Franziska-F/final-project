@@ -7,7 +7,7 @@ type Props = {
 };
 export default function UserProfil(props: Props) {
   const [userReviews, setUserReviews] = useState([]);
-  const [acitveId, setAktiveId] = useState(undefined);
+  const [aktiveId, setAktiveId] = useState(undefined);
   const [editReview, setEditReview] = useState('');
 
   useEffect(() => {
@@ -69,19 +69,16 @@ export default function UserProfil(props: Props) {
     setUserReviews(newState);
   }
 
-  if (!props.user) {
-    return <h1>User not found!</h1>;
-  }
   return (
     <div>
       <div className="book-list">
         <h1>Hallo, {props.user.username}</h1>
         <h2>Your reviews</h2>
         {userReviews.map((listItem) => {
-          return (
+          return listItem.id === aktiveId ? (
             <div key={listItem.id}>
               <div>
-                <h3></h3>
+                <h3>{listItem.title}</h3>
                 <label htmlFor="review">
                   <textarea
                     id="review"
@@ -127,6 +124,9 @@ export default function UserProfil(props: Props) {
                   Delete
                 </button>
               </div>
+            </div>
+          ) : (
+            <>
               <div key={listItem.id}>
                 <h3>{listItem.book_title}</h3>
                 <label htmlFor="review">
@@ -138,18 +138,15 @@ export default function UserProfil(props: Props) {
                     onChange={(event) =>
                       setEditReview(event.currentTarget.value)
                     }
-
-                    //   onChange={(event) => {
-                    //   setReview(event.currentTarget.value);
                   />
                 </label>
-                <p></p>
               </div>
 
               <div>
                 <button
                   onClick={() => {
                     setAktiveId(listItem.id);
+                    setEditReview(listItem.review);
                   }}
                 >
                   Edit
@@ -158,6 +155,7 @@ export default function UserProfil(props: Props) {
               <div>
                 <button
                   onClick={() => {
+                    console.log(listItem.id);
                     deleteReviewById(listItem.book_id, listItem.id).catch(
                       () => {
                         console.log('Delete request fails');
@@ -168,7 +166,7 @@ export default function UserProfil(props: Props) {
                   Delete
                 </button>
               </div>
-            </div>
+            </>
           );
         })}
       </div>
