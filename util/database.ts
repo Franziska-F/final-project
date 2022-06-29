@@ -268,3 +268,44 @@ RETURNING
    `;
   return updatedReview;
 }
+
+// Adding a book to the readinglist
+
+export async function addToReadingList(
+  user_id: User['id'],
+  book_id: 'string',
+  book_title: 'string',
+  book_author: 'string',
+
+  // timestamp is created by default
+) {
+  const readingList = await sql<[UserReview]>`INSERT INTO
+readingList (user_id, book_id, book_title, book_author)
+VALUES
+(${user_id}, ${book_id}, ${book_title}, ${book_author})
+RETURNING
+
+id,
+user_id,
+book_id,
+book_title,
+book_author
+
+`;
+  return readingList;
+}
+
+// Get the all books of one user
+
+export async function getReadingListByUserId(userId: number) {
+  if (!userId) return undefined;
+  const readingList = await sql<[User | undefined]>`
+    SELECT
+      *
+    FROM
+      readingList
+    WHERE
+      user_id = ${userId}
+  `;
+  return readingList;
+}

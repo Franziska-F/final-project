@@ -7,6 +7,7 @@ const wrapper = css`
   margin: 0 auto;
   width: 600px;
 `;
+// GET all reviews to one book
 
 export default function BookDetails(props) {
   const [review, setReview] = useState('');
@@ -23,6 +24,8 @@ export default function BookDetails(props) {
       console.log('Reviews request failed');
     });
   }, [props.book.id]);
+
+  // POST a  review to a book
 
   async function createReviewHandler() {
     const reviewResponse = await fetch('../api/reviews', {
@@ -43,6 +46,29 @@ export default function BookDetails(props) {
     const updatedReviewsList = [...reviewsList, reviewResponseBody];
 
     setReviewsList(updatedReviewsList);
+  }
+
+  // add book to the readinglist
+
+  async function addBookHandler() {
+    const addBookResponse = await fetch('../api/readingList', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id: props.user.id,
+        book_id: props.book.id,
+        book_title: props.book.volumeInfo.title,
+        book_author: props.book.volumeInfo.authors,
+      }),
+    });
+
+    const addBookResponseBody = await addBookResponse.json();
+
+    // const updatedReadingList = [...readingList, addBookResponseBody];
+
+    // setReadingList(updatedReadingList);
   }
   if (!props.book) {
     return <h1>Book not found</h1>;
@@ -65,7 +91,15 @@ export default function BookDetails(props) {
       <br />
       <div>
         {' '}
-        <button>Add to your reading list</button>
+        <button
+          onClick={() =>
+            addBookHandler().catch(() => {
+              console.log('Post request fails');
+            })
+          }
+        >
+          Add to your reading list
+        </button>
       </div>
       <div>
         <h2> Write a review </h2>

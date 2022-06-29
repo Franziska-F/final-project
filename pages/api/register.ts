@@ -49,7 +49,6 @@ export default async function handler(
     // get user name
 
     const username = user.username;
-    console.log(req.body);
 
     // hash the password
 

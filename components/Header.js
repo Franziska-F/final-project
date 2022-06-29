@@ -40,7 +40,7 @@ const header = css`
 `;
 
 export default function Header(props) {
-  console.log(props.user);
+ 
   return (
     <header css={header}>
       <div className="links">

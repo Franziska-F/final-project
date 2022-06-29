@@ -1,6 +1,11 @@
 import { GetServerSidePropsContext } from 'next';
+import { responseSymbol } from 'next/dist/server/web/spec-compliant/fetch-event';
 import { useEffect, useState } from 'react';
-import { getUserBySessionToken, User } from '../../util/database';
+import {
+  getReadingListByUserId,
+  getUserBySessionToken,
+  User,
+} from '../../util/database';
 
 type Props = {
   user?: User;
@@ -9,6 +14,7 @@ export default function UserProfil(props: Props) {
   const [userReviews, setUserReviews] = useState([]);
   const [aktiveId, setAktiveId] = useState(undefined);
   const [editReview, setEditReview] = useState('');
+  const [readingList, setReadingList] = useState(props.readingList);
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -17,7 +23,7 @@ export default function UserProfil(props: Props) {
       setUserReviews(reviews);
     }
     getReviewsByUserId().catch(() => {
-      console.log('Reviews request failed');
+      console.log('Reviews request fails');
     });
   }, []);
 
@@ -87,8 +93,6 @@ export default function UserProfil(props: Props) {
                     onChange={(event) =>
                       setEditReview(event.currentTarget.value)
                     }
-
-                    
                   />
                 </label>
               </div>
@@ -179,24 +183,34 @@ export default function UserProfil(props: Props) {
           </ul>
         </div>
       </div>
-      <div className="readingList">
-        <h2>Your reading list</h2>
 
-        <div>
-          <h4>Title</h4>
-        </div>
-      </div>
+      {readingList.map((item) => {
+
+
+        return (
+          <div className="readingList" key={`readingList-${item.id}`}>
+            <h2>Your reading list</h2>
+            <h4>{item.book_title}</h4>
+            <h4>{item.book_author}</h4>
+            <button>Delete</button>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
+  const responseReadingList = await getReadingListByUserId(user.id);
+
+  const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
   if (user) {
     return {
       props: {
         user: user,
+        readingList: readingList,
       },
     };
   }
