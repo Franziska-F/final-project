@@ -1,8 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
-import { responseSymbol } from 'next/dist/server/web/spec-compliant/fetch-event';
 import { useEffect, useState } from 'react';
 import {
-  getReadingListByUserId,
+  getlistedBooksByUserId,
   getUserBySessionToken,
   User,
 } from '../../util/database';
@@ -27,7 +26,7 @@ export default function UserProfil(props: Props) {
     });
   }, []);
 
-  // Delte reviews
+  // DELETE reviews // reviews/id
   async function deleteReviewById(bookId, id) {
     const response = await fetch(`../api/reviews/${bookId}`, {
       method: 'DELETE',
@@ -73,6 +72,30 @@ export default function UserProfil(props: Props) {
 
     // use setState func
     setUserReviews(newState);
+  }
+
+  // DELETE books from the reading list
+
+  async function deleteBookById(id) {
+    const response = await fetch(`../api/listedBooks/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: id,
+      }),
+    });
+    const deletedBook = await response.json();
+
+    console.log(deletedBook);
+
+    // copy state
+    // update copy of the state
+    const newState = readingList.filter((item) => item.id !== deletedBook.id);
+    // use setState func
+    console.log(newState);
+    setReadingList(newState);
   }
 
   return (
@@ -185,14 +208,20 @@ export default function UserProfil(props: Props) {
       </div>
 
       {readingList.map((item) => {
-
-
         return (
           <div className="readingList" key={`readingList-${item.id}`}>
             <h2>Your reading list</h2>
             <h4>{item.book_title}</h4>
             <h4>{item.book_author}</h4>
-            <button>Delete</button>
+            <button
+              onClick={() =>
+                deleteBookById(item.id).catch(() => {
+                  console.log('Delete request fails');
+                })
+              }
+            >
+              Delete
+            </button>
           </div>
         );
       })}
@@ -202,7 +231,7 @@ export default function UserProfil(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
-  const responseReadingList = await getReadingListByUserId(user.id);
+  const responseReadingList = await getlistedBooksByUserId(user.id);
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 

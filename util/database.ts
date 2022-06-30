@@ -297,7 +297,7 @@ book_author
 
 // Get the all books of one user
 
-export async function getReadingListByUserId(userId: number) {
+export async function getlistedBooksByUserId(userId: number) {
   if (!userId) return undefined;
   const readingList = await sql<[User | undefined]>`
     SELECT
@@ -308,4 +308,18 @@ export async function getReadingListByUserId(userId: number) {
       user_id = ${userId}
   `;
   return readingList;
+}
+
+// DELETE book from readingList
+
+export async function deleteBook(id: number) {
+  const [review] = await sql`
+  DELETE FROM
+    readingList
+  WHERE
+    readingList.id = ${id}
+  RETURNING *
+  `;
+
+  return review;
 }

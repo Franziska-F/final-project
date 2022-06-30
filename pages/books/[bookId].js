@@ -51,7 +51,7 @@ export default function BookDetails(props) {
   // add book to the readinglist
 
   async function addBookHandler() {
-    const addBookResponse = await fetch('../api/readingList', {
+    const addBookResponse = await fetch(`../api/listedBooks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

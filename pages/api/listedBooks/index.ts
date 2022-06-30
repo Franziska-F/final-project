@@ -1,4 +1,4 @@
-import { addToReadingList } from '../../util/database';
+import { addToReadingList, deleteBook } from '../../../util/database';
 
 export default async function handler(req, res) {
   // TODO: add a fail case when id is not a valid animalId
@@ -14,5 +14,12 @@ export default async function handler(req, res) {
     return res.status(200).json(addBook);
   } else {
     res.status(405).json({ errors: [{ message: 'Method not allowed' }] });
+  }
+  {
+    /*} if (req.method === 'DELETE') {
+    const removeBook = await deleteBook(req.body.id);
+
+    return res.status(200).json(removeBook);
+  } {*/
   }
 }

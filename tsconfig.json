@@ -30,6 +30,6 @@
     "**/*.jsx",
     "**/*.cjs",
     "**/*.mjs"
-  ],
+, "pages/api/listedBooks/index.ts"  ],
   "exclude": ["node_modules", "build"]
 }
