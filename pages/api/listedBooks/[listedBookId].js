@@ -2,6 +2,8 @@ import { deleteBook } from '../../../util/database';
 
 export default async function handler(req, res) {
   if (req.method === 'DELETE') {
+
+    // get id from query param
     const removeBook = await deleteBook(req.body.id);
 
     return res.status(200).json(removeBook);

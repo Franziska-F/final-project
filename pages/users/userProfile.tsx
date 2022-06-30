@@ -27,15 +27,12 @@ export default function UserProfil(props: Props) {
   }, []);
 
   // DELETE reviews // reviews/id
-  async function deleteReviewById(bookId, id) {
-    const response = await fetch(`../api/reviews/${bookId}`, {
+  async function deleteReviewById(id) {
+    const response = await fetch(`../api/reviews/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        id: id,
-      }),
     });
     const deletedReview = await response.json();
 
@@ -47,14 +44,13 @@ export default function UserProfil(props: Props) {
   }
 
   // Uptdate reviews
-  async function updateReview(bookId, id, editReview) {
-    const response = await fetch(`../api/reviews/${bookId}`, {
+  async function updateReview(id, editReview) {
+    const response = await fetch(`../api/reviews/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id: id,
         review: editReview,
       }),
     });
@@ -124,11 +120,7 @@ export default function UserProfil(props: Props) {
                   onClick={() => {
                     setAktiveId(undefined);
                     setEditReview(listItem.review);
-                    updateReview(
-                      listItem.book_id,
-                      listItem.id,
-                      editReview,
-                    ).catch(() => {
+                    updateReview(listItem.id, editReview).catch(() => {
                       console.log('Put request fails');
                     });
                   }}
@@ -139,12 +131,9 @@ export default function UserProfil(props: Props) {
               <div>
                 <button
                   onClick={() => {
-                    console.log(listItem.id);
-                    deleteReviewById(listItem.book_id, listItem.id).catch(
-                      () => {
-                        console.log('Delete request fails');
-                      },
-                    );
+                    deleteReviewById(listItem.id).catch(() => {
+                      console.log('Delete request fails');
+                    });
                   }}
                 >
                   Delete
@@ -181,12 +170,9 @@ export default function UserProfil(props: Props) {
               <div>
                 <button
                   onClick={() => {
-                    console.log(listItem.id);
-                    deleteReviewById(listItem.book_id, listItem.id).catch(
-                      () => {
-                        console.log('Delete request fails');
-                      },
-                    );
+                    deleteReviewById(listItem.id).catch(() => {
+                      console.log('Delete request fails');
+                    });
                   }}
                 >
                   Delete

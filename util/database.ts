@@ -241,7 +241,7 @@ export async function getReviewsByUserId(userId: string) {
 }
 // Delete single review by review id
 
-export async function deleteReview(id: number) {
+export async function deleteReviewById(id: number) {
   const [review] = await sql`
   DELETE FROM
     reviews

@@ -6,7 +6,7 @@ import {
   getReviewsByBookId,
   getReviewsByUserId,
   getUserBySessionToken,
-} from '../../util/database';
+} from '../../../util/database';
 
 export type ReviewResponseBody = {
   errors: { message: string }[];
@@ -38,10 +38,20 @@ export default async function handler(
   // POST-method for new user-reviews
 
   if (req.method === 'POST') {
+
+// check for sessionToken!
+
+    const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    const bookResponse = await fetch(
+      `https://books.googleapis.com/books/v1/volumes/${req.body.book_id}`,
+    );
+    const book = await bookResponse.json();
+
     const newReview = await createReview(
-      req.body.user_id,
+      user.id,
       req.body.book_id,
-      req.body.book_title,
+      book.volumeInfo.title,
       req.body.review,
     );
     return res.status(200).json(newReview);
