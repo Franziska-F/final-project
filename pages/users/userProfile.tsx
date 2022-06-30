@@ -17,7 +17,7 @@ export default function UserProfil(props: Props) {
 
   useEffect(() => {
     async function getReviewsByUserId() {
-      const response = await fetch(`../api/reviews/`);
+      const response = await fetch(`../api/reviews`);
       const reviews = await response.json();
       setUserReviews(reviews);
     }

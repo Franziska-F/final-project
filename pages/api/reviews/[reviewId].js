@@ -5,16 +5,14 @@ import {
 } from '../../../util/database';
 
 export default async function handler(req, res) {
-  const bookId = req.query.bookId;
+  //  res.status(200).json(req.query);
 
-  {
-    /* } if (req.method === 'GET') {
-    if (bookId) {
-      console.log(req.query);
-      const allReviewsToBook = await getReviewsByBookId(bookId);
-      return res.status(200).json(allReviewsToBook);
-    }
-  } {*/
+  if (req.method === 'GET') {
+    const bookId = req.query;
+
+    console.log(bookId);
+    const allReviewsToBook = await getReviewsByBookId(bookId);
+    return res.status(200).json(allReviewsToBook);
   }
 
   if (req.method === 'DELETE') {

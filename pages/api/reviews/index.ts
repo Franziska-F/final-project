@@ -16,17 +16,29 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ReviewResponseBody>,
 ) {
-  // GET-request to display all reviews at first render
-  const user = await getUserBySessionToken(req.cookies.sessionToken);
+  // get all reviews for one book
+
   if (req.method === 'GET') {
-    const allReviewsOfUser = await getReviewsByUserId(user.id);
+    //(req.method === 'GET')
+    if (Object.keys(req.query).length !== 0) {
+      const bookId = req.query;
 
-    return res.status(200).json(allReviewsOfUser);
+      const allReviewsToBook = await getReviewsByBookId(bookId.bookid);
+
+      return res.status(200).json(allReviewsToBook);
+    }
+
+    // GET-request to display all reviews of a user at first render in userProfile
+    else {
+      // if (req.method === 'GET') {
+      const user = await getUserBySessionToken(req.cookies.sessionToken);
+      //  const userId = req.query;
+      
+      const allReviewsOfUser = await getReviewsByUserId(user.id);
+
+      return res.status(200).json(allReviewsOfUser);
+    }
   }
-
-  /* const allReviewsForBook = await getAllReviews();
-
-    return res.status(200).json(allReviewsForBook); */
 
   if (typeof req.body.review !== 'string') {
     res.status(400).json({
@@ -38,8 +50,7 @@ export default async function handler(
   // POST-method for new user-reviews
 
   if (req.method === 'POST') {
-
-// check for sessionToken!
+    // check for sessionToken!
 
     const user = await getUserBySessionToken(req.cookies.sessionToken);
 

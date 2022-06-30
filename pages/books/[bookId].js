@@ -15,7 +15,9 @@ export default function BookDetails(props) {
 
   useEffect(() => {
     async function getReviews() {
-      const response = await fetch(`/api/reviews?bookid=${props.book.id}`); // ../api/reviews?bookId=zwfWnAEACAAJ
+      const response = await fetch(
+        `/api/reviews?bookid=${props.book.id}`,
+      ); // ../api/reviews?bookId=zwfWnAEACAAJ
 
       const reviews = await response.json();
       setReviewsList(reviews);
@@ -34,7 +36,6 @@ export default function BookDetails(props) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-
         book_id: props.book.id,
         // book_title: props.book.volumeInfo.title,
         review: review,
