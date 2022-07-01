@@ -350,3 +350,23 @@ export async function deleteBook(id: number) {
 
   return review;
 }
+
+// Add new user pair to connections
+
+export async function addToConnections(
+  user_id: User['id'],
+  connected_user_id: number,
+
+  // timestamp is created by default
+) {
+  const newConnection = await sql`INSERT INTO
+connections (user_id, connected_user_id)
+VALUES
+(${user_id}, ${connected_user_id})
+RETURNING
+
+*
+
+`;
+  return newConnection;
+}

@@ -43,9 +43,7 @@ export default function BookDetails(props) {
     const reviewResponseBody = await reviewResponse.json();
     const username = { username: props.user.username };
 
-
     const newState = [...reviewsList, reviewResponseBody].push(username);
-
 
     setReviewsList(newState);
   }
@@ -64,8 +62,6 @@ export default function BookDetails(props) {
     });
 
     const addBookResponseBody = await addBookResponse.json();
-
-
   }
   if (!props.book) {
     return <h1>Book not found</h1>;
@@ -139,7 +135,9 @@ export default function BookDetails(props) {
             {reviewsList.map((listItem) => {
               return (
                 <div key={`review-${listItem.review_timestamp}`}>
-                  <h4> {listItem.username}</h4>
+                  <Link href={`/readers/${listItem.review_user_id}`}>
+                    {listItem.username}
+                  </Link>
                   <p>{listItem.review}</p>
                 </div>
               );
