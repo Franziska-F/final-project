@@ -1,10 +1,18 @@
 import {
   addToConnections,
+  getReadersWithUsername,
   getUserBySessionToken,
 } from '../../../util/database';
 
 export default async function handler(req, res) {
-  // Add a book to readinglist
+  if (req.method === 'GET') {
+    const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    const reader = await getReadersWithUsername(user.id);
+
+    return res.status(200).json(reader);
+  }
+
   if (req.method === 'POST') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
     console.log(req.body.connected_user_id);

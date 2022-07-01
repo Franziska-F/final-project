@@ -370,3 +370,40 @@ RETURNING
 `;
   return newConnection;
 }
+
+export async function getConnectedUserByUserId(userId) {
+  if (!userId) return undefined;
+  const connectedUser = await sql<[User | undefined]>`
+    SELECT
+      *
+    FROM
+      connections
+    WHERE
+      user_id = ${userId}
+  `;
+  return connectedUser;
+}
+
+// get connected readers and their names
+
+export async function getReadersWithUsername(userId: string) {
+  if (!userId) return undefined;
+  const readersWithNames = await sql`
+    SELECT
+
+    connections.connected_user_id AS connected_id,
+    users.username AS username,
+    users.id AS user_id
+
+    FROM
+     connections,
+    users
+    WHERE
+    connections.user_id = ${userId} AND
+    users.id = connections.connected_user_id
+
+
+
+  `;
+  return readersWithNames;
+}

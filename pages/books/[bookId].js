@@ -41,13 +41,13 @@ export default function BookDetails(props) {
     });
 
     const reviewResponseBody = await reviewResponse.json();
-    const username = { username: props.user.username };
 
-    const newState = [...reviewsList, reviewResponseBody].push(username);
+    const username = { username: props.user.username };
+    const newReviewObject = { ...username, ...reviewResponseBody };
+    const newState = [...reviewsList, newReviewObject];
 
     setReviewsList(newState);
   }
-
   // add book to the readinglist
 
   async function addBookHandler() {
@@ -147,16 +147,6 @@ export default function BookDetails(props) {
           <p>
             There is <span>1</span> review, please log in or register to read id
           </p>
-        )}
-      </div>
-      <div>
-        <h2> Readers </h2>
-        {props.user ? (
-          <div>
-            <h4>Ada</h4>
-          </div>
-        ) : (
-          <p>Please log in or register to see other readers</p>
         )}
 
         {!props.user ? (

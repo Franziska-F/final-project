@@ -1,7 +1,9 @@
 import { GetServerSidePropsContext } from 'next';
 import { useEffect, useState } from 'react';
 import {
+  getConnectedUserByUserId,
   getlistedBooksByUserId,
+  getUserById,
   getUserBySessionToken,
   User,
 } from '../../util/database';
@@ -14,6 +16,7 @@ export default function UserProfil(props: Props) {
   const [aktiveId, setAktiveId] = useState(undefined);
   const [editReview, setEditReview] = useState('');
   const [readingList, setReadingList] = useState(props.readingList);
+  const [connectedReaders, setConnectedReaders] = useState([]);
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -24,7 +27,17 @@ export default function UserProfil(props: Props) {
     getReviewsByUserId().catch(() => {
       console.log('Reviews request fails');
     });
-  }, []);
+
+    async function getConnectedRedadersById() {
+      const response = await fetch(`../api/connections`);
+      const readers = await response.json();
+      setConnectedReaders(readers);
+      console.log(readers);
+    }
+    getConnectedRedadersById().catch(() => {
+      console.log('Reader request fails');
+    });
+  }, [props.user.id]);
 
   // DELETE reviews // reviews/id
   async function deleteReviewById(id) {
@@ -84,11 +97,7 @@ export default function UserProfil(props: Props) {
     });
     const deletedBook = await response.json();
 
-
-
-   
     const newState = readingList.filter((item) => item.id !== deletedBook.id);
-
 
     setReadingList(newState);
   }
@@ -185,10 +194,23 @@ export default function UserProfil(props: Props) {
         <h2>Connected Readers</h2>
 
         <div>
-          <ul>
-            <li>Reader 1</li>
-            <li>Reader 2</li>
-          </ul>
+          {connectedReaders.map((item) => {
+            return (
+              <div className="readingList" key={`readingList-${item.id}`}>
+                <h4>{item.username}</h4>
+
+                <button
+                  onClick={() =>
+                    deleteBookById(item.id).catch(() => {
+                      console.log('Delete request fails');
+                    })
+                  }
+                >
+                  Delete
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -220,11 +242,16 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
+  const readers = await getConnectedUserByUserId(user.id);
+
+  console.log(readers);
+
   if (user) {
     return {
       props: {
         user: user,
         readingList: readingList,
+        readers: readers,
       },
     };
   }
