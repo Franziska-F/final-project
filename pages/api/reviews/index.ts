@@ -5,6 +5,7 @@ import {
   getAllReviews,
   getReviewsByBookId,
   getReviewsByUserId,
+  getReviewsWithUsername,
   getUserBySessionToken,
 } from '../../../util/database';
 
@@ -19,22 +20,29 @@ export default async function handler(
   // get all reviews for one book
 
   if (req.method === 'GET') {
-    //(req.method === 'GET')
-    if (Object.keys(req.query).length !== 0) {
-      const bookId = req.query;
+    const bookId = req.query.bookid;
+    const userId = req.query.userid;
+    // (req.method === 'GET')
+    if (
+      // (Object.keys(req.query).length !== 0) {
+      bookId
+    ) {
+      // const allReviewsToBook = await getReviewsByBookId(bookId);
 
-      const allReviewsToBook = await getReviewsByBookId(bookId.bookid);
+      // return res.status(200).json(allReviewsToBook);
 
-      return res.status(200).json(allReviewsToBook);
+      console.log(bookId);
+      const allReviewsWithUsername = await getReviewsWithUsername(bookId);
+
+      return res.status(200).json(allReviewsWithUsername);
     }
 
-    // GET-request to display all reviews of a user at first render in userProfile
-    else {
+    // GET-request to display all reviews // of a user at first render in userProfile
+    if (userId) {
       // if (req.method === 'GET') {
-      const user = await getUserBySessionToken(req.cookies.sessionToken);
-      //  const userId = req.query;
-      
-      const allReviewsOfUser = await getReviewsByUserId(user.id);
+      // const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+      const allReviewsOfUser = await getReviewsByUserId(userId);
 
       return res.status(200).json(allReviewsOfUser);
     }
@@ -61,7 +69,7 @@ export default async function handler(
 
     const newReview = await createReview(
       user.id,
-      req.body.book_id,
+      req.body.book_id, // how to get the bookId?
       book.volumeInfo.title,
       req.body.review,
     );

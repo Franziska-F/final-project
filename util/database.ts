@@ -239,6 +239,33 @@ export async function getReviewsByUserId(userId: string) {
   `;
   return reviewsOfUser;
 }
+
+// Get reviews and the usernames of the authors
+
+export async function getReviewsWithUsername(bookId: string) {
+  if (!bookId) return undefined;
+  const reviewsWithUsernames = await sql`
+    SELECT
+    reviews.user_id AS review_user_id,
+    reviews.book_id AS book_id,
+    reviews.review AS review,
+    reviews.created_timestamp AS review_timestamp,
+    users.username AS username,
+    users.id AS user_id
+
+    FROM
+      reviews,
+      users
+    WHERE
+    reviews.book_id = ${bookId} AND
+    users.id = reviews.user_id
+
+
+
+  `;
+  return reviewsWithUsernames;
+}
+
 // Delete single review by review id
 
 export async function deleteReviewById(id: number) {

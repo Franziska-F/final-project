@@ -14,15 +14,13 @@ export default function BookDetails(props) {
   const [reviewsList, setReviewsList] = useState([]);
 
   useEffect(() => {
-    async function getReviews() {
-      const response = await fetch(
-        `/api/reviews?bookid=${props.book.id}`,
-      ); // ../api/reviews?bookId=zwfWnAEACAAJ
+    async function getReviewsWithUsernames() {
+      const response = await fetch(`/api/reviews?bookid=${props.book.id}`); // ../api/reviews?bookId=zwfWnAEACAAJ
 
       const reviews = await response.json();
       setReviewsList(reviews);
     }
-    getReviews().catch(() => {
+    getReviewsWithUsernames().catch(() => {
       console.log('Reviews request failed');
     });
   }, [props.book.id]);
@@ -37,16 +35,19 @@ export default function BookDetails(props) {
       },
       body: JSON.stringify({
         book_id: props.book.id,
-        // book_title: props.book.volumeInfo.title,
+
         review: review,
       }),
     });
 
     const reviewResponseBody = await reviewResponse.json();
+    const username = { username: props.user.username };
 
-    const updatedReviewsList = [...reviewsList, reviewResponseBody];
 
-    setReviewsList(updatedReviewsList);
+    const newState = [...reviewsList, reviewResponseBody].push(username);
+
+
+    setReviewsList(newState);
   }
 
   // add book to the readinglist
@@ -58,18 +59,13 @@ export default function BookDetails(props) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        user_id: props.user.id,
         book_id: props.book.id,
-        book_title: props.book.volumeInfo.title,
-        book_author: props.book.volumeInfo.authors,
       }),
     });
 
     const addBookResponseBody = await addBookResponse.json();
 
-    // const updatedReadingList = [...readingList, addBookResponseBody];
 
-    // setReadingList(updatedReadingList);
   }
   if (!props.book) {
     return <h1>Book not found</h1>;
@@ -142,8 +138,8 @@ export default function BookDetails(props) {
           <div>
             {reviewsList.map((listItem) => {
               return (
-                <div key={`review-${listItem.id}`}>
-                  <h4> {listItem.user_id}</h4>
+                <div key={`review-${listItem.review_timestamp}`}>
+                  <h4> {listItem.username}</h4>
                   <p>{listItem.review}</p>
                 </div>
               );
@@ -213,9 +209,3 @@ export async function getServerSideProps(context) {
     },
   };
 }
-
-// return {
-//   props: {
-//     book: book,
-//    },
-//  };

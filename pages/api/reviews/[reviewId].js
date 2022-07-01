@@ -10,9 +10,9 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const bookId = req.query;
 
-    console.log(bookId);
-    const allReviewsToBook = await getReviewsByBookId(bookId);
-    return res.status(200).json(allReviewsToBook);
+     const allReviewsToBook = await getReviewsByBookId(bookId);
+     return res.status(200).json(allReviewsToBook);
+
   }
 
   if (req.method === 'DELETE') {

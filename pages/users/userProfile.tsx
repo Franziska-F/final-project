@@ -17,7 +17,7 @@ export default function UserProfil(props: Props) {
 
   useEffect(() => {
     async function getReviewsByUserId() {
-      const response = await fetch(`../api/reviews`);
+      const response = await fetch(`/api/reviews?userid=${props.user.id}`);
       const reviews = await response.json();
       setUserReviews(reviews);
     }
@@ -84,13 +84,12 @@ export default function UserProfil(props: Props) {
     });
     const deletedBook = await response.json();
 
-    console.log(deletedBook);
 
-    // copy state
-    // update copy of the state
+
+   
     const newState = readingList.filter((item) => item.id !== deletedBook.id);
-    // use setState func
-    console.log(newState);
+
+
     setReadingList(newState);
   }
 
