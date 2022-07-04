@@ -393,7 +393,8 @@ export async function getReadersWithUsername(userId: string) {
 
     connections.connected_user_id AS connected_id,
     users.username AS username,
-    users.id AS user_id
+    users.id AS user_id,
+    connections.id AS id
 
     FROM
      connections,
@@ -406,4 +407,18 @@ export async function getReadersWithUsername(userId: string) {
 
   `;
   return readersWithNames;
+}
+
+// Delete connected reader
+
+export async function deleteConnectionById(id) {
+  if (!id) return undefined;
+  const deletedConnection = await sql`
+  DELETE FROM
+  connections
+  WHERE
+  id = ${id}
+  RETURNING
+  *`;
+  return deletedConnection;
 }

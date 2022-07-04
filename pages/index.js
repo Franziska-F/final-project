@@ -38,7 +38,11 @@ export default function Home() {
             <div key={item.id}>
               <a href={`/books/${item.id}`}>
                 <p>{item.volumeInfo.title}</p>
-                <p>{item.volumeInfo.authors}</p>
+                <p>
+                  {item.volumeInfo.authors
+                    ? item.volumeInfo.authors[0]
+                    : 'Unknowen'}
+                </p>
                 <img
                   src={
                     item.volumeInfo.imageLinks !== undefined

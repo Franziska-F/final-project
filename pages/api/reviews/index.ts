@@ -1,9 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import {
   createReview,
-  deleteReview,
-  getAllReviews,
-  getReviewsByBookId,
   getReviewsByUserId,
   getReviewsWithUsername,
   getUserBySessionToken,
@@ -31,7 +28,7 @@ export default async function handler(
 
       // return res.status(200).json(allReviewsToBook);
 
-      console.log(bookId);
+     
       const allReviewsWithUsername = await getReviewsWithUsername(bookId);
 
       return res.status(200).json(allReviewsWithUsername);

@@ -27,12 +27,11 @@ export default function UserProfil(props: Props) {
     getReviewsByUserId().catch(() => {
       console.log('Reviews request fails');
     });
-
+    // GET connected readers
     async function getConnectedRedadersById() {
       const response = await fetch(`../api/connections`);
       const readers = await response.json();
       setConnectedReaders(readers);
-      console.log(readers);
     }
     getConnectedRedadersById().catch(() => {
       console.log('Reader request fails');
@@ -40,7 +39,7 @@ export default function UserProfil(props: Props) {
   }, [props.user.id]);
 
   // DELETE reviews // reviews/id
-  async function deleteReviewById(id) {
+  async function deleteReviewById(id: number) {
     const response = await fetch(`../api/reviews/${id}`, {
       method: 'DELETE',
       headers: {
@@ -57,7 +56,7 @@ export default function UserProfil(props: Props) {
   }
 
   // Uptdate reviews
-  async function updateReview(id, editReview) {
+  async function updateReview(id: number, editReview) {
     const response = await fetch(`../api/reviews/${id}`, {
       method: 'PUT',
       headers: {
@@ -91,15 +90,30 @@ export default function UserProfil(props: Props) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        id: id,
-      }),
     });
     const deletedBook = await response.json();
 
     const newState = readingList.filter((item) => item.id !== deletedBook.id);
 
     setReadingList(newState);
+  }
+
+  // DELETE connected reader
+
+  async function deleteConnectionById(id) {
+    const response = await fetch(`../api/connections/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const deletedConnection = await response.json();
+
+    const newState = deletedConnection.filter(
+      (item) => item.id !== deletedConnection.id,
+    );
+
+    setConnectedReaders(newState);
   }
 
   return (
@@ -190,18 +204,19 @@ export default function UserProfil(props: Props) {
           );
         })}
       </div>
+      {/* }connected readers {*/}
       <div className="connected-readers">
         <h2>Connected Readers</h2>
 
         <div>
           {connectedReaders.map((item) => {
             return (
-              <div className="readingList" key={`readingList-${item.id}`}>
+              <div className="connectionsList" key={`connections-${item.id}`}>
                 <h4>{item.username}</h4>
 
                 <button
                   onClick={() =>
-                    deleteBookById(item.id).catch(() => {
+                    deleteConnectionById(item.id).catch(() => {
                       console.log('Delete request fails');
                     })
                   }
@@ -243,8 +258,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
   const readers = await getConnectedUserByUserId(user.id);
-
-  console.log(readers);
 
   if (user) {
     return {

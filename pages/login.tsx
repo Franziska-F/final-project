@@ -67,6 +67,7 @@ export default function Login(props: Props) {
           <input
             placeholder="password"
             value={password}
+            type="password"
             onChange={(event) => {
               setPassword(event.currentTarget.value);
             }}

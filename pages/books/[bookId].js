@@ -34,7 +34,7 @@ export default function BookDetails(props) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        book_id: props.book.id,
+        book_id: props.book.id, // better using query here?
 
         review: review,
       }),
@@ -71,7 +71,12 @@ export default function BookDetails(props) {
       {' '}
       <div>
         <p>{props.book.volumeInfo.title}</p>
-        <p>{props.book.volumeInfo.authors}</p>
+        <p>
+          {props.book.volumeInfo.authors
+            ? props.book.volumeInfo.authors[0]
+            : 'Unknowen'}
+        
+        </p>
         <img
           src={
             props.book.volumeInfo.imageLinks !== undefined
