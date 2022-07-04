@@ -20,7 +20,7 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Read, write, connect</h1>
+      <h1 className="text-3xl font-bold">Read, write, connect</h1>
       <div>
         <input
           placeholder="Search for a book"
