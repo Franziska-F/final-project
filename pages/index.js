@@ -20,9 +20,10 @@ export default function Home() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold">Read, write, connect</h1>
+      <h1 className="text-3xl font-bold font-main">Read, write, connect</h1>
       <div>
         <input
+          className="border-black-300 focus:border-blue-400"
           placeholder="Search for a book"
           onChange={(event) => {
             const title = event.currentTarget.value;

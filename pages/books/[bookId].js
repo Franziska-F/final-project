@@ -67,7 +67,7 @@ export default function BookDetails(props) {
     return <h1>Book not found</h1>;
   }
   return (
-    <div css={wrapper}>
+    <section css={wrapper}>
       {' '}
       <div>
         <p>{props.book.volumeInfo.title}</p>
@@ -75,7 +75,6 @@ export default function BookDetails(props) {
           {props.book.volumeInfo.authors
             ? props.book.volumeInfo.authors[0]
             : 'Unknowen'}
-        
         </p>
         <img
           src={
@@ -170,7 +169,7 @@ export default function BookDetails(props) {
           <span />
         )}
       </div>
-    </div>
+    </section>
   );
 }
 

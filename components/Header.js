@@ -1,80 +1,59 @@
 import { css } from '@emotion/react';
 import Link from 'next/link';
 
-const header = css`
-  background-color: #333333;
-  display: flex;
-  justify-content: space-between;
-  color: #f1f0e3;
-
-  .links ul {
-    display: flex;
-
-    justify-content: space-evenly;
-    list-style: none;
-  }
-  .links ul li {
-    margin: 4px 8px;
-  }
-  .links ul a {
-    cursor: pointer;
-    color: #f1f0e3;
-  }
-
-  .roles {
-    margin-right: 30px;
-  }
-  .roles ul {
-    list-style: none;
-    display: flex;
-    justify-content: space-evenly;
-  }
-  .roles ul li {
-    margin: 4px 8px;
-  }
-
-  .roles ul li a {
-    cursor: pointer;
-    color: #f1f0e3;
-  }
-`;
-
 export default function Header(props) {
- 
   return (
-    <header css={header}>
-      <div className="links">
-        <ul>
-          <li>
-            <Link href="/">Search </Link>
-          </li>
-        </ul>
-      </div>
+    <header>
+      <div className="flex flex-row items-center text-base py-4 px-4">
+        <div className="basis-1/4 text-2xl">the bookclub</div>
+        <nav className="flex justify-between basis-3/4">
+          <div>
+            <ul>
+              <li>
+                <Link href="/" className="text-base px-6">
+                  search
+                </Link>
+              </li>
+            </ul>
+          </div>
 
-      <div className="roles">
-        <ul>
-          <li>
-            {' '}
-            {props.user && (
-              <a href="/users/userProfile"> {props.user.user.username}</a>
-            )}{' '}
-          </li>
-          {props.user ? (
-            <li>
-              <a href="/logout">Logout</a>
-            </li>
-          ) : (
-            <>
+          <div>
+            <ul className="flex justify-around items-center px-4">
               <li>
                 {' '}
-                <Link href="/login">Login</Link>
+                {props.user && (
+                  <a href="/users/userProfile" className="text-base">
+                    {props.user.user.username}
+                  </a>
+                )}{' '}
               </li>
-              <li>
-                <Link href="/register">Register</Link>
-              </li>{' '}
-            </>
-          )}
-        </ul>
+              {props.user ? (
+                <li>
+                  <a href="/logout" className="text-base ">
+                    logout
+                  </a>
+                </li>
+              ) : (
+                <>
+                  <li>
+                    {' '}
+                    <Link href="/login" className="text-base">
+                      login
+                    </Link>
+                  </li>
+                  <li>
+                    <div className="px-4">|</div>
+                  </li>
+                  <li>
+                    <Link href="/register" className="text-base ">
+                      register
+                    </Link>
+                  </li>{' '}
+                </>
+              )}
+            </ul>
+          </div>
+        </nav>
       </div>
     </header>
   );
