@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function Header(props) {
   return (
     <header>
-      <div className="flex flex-row items-center text-base py-4 px-4">
+      <div className="flex flex-row items-center text-base pt-4 px-4 border-b border-black">
         <div className="basis-1/4 text-2xl">the bookclub</div>
         <nav className="flex justify-between basis-3/4">
           <div>
@@ -26,6 +26,9 @@ export default function Header(props) {
                     {props.user.user.username}
                   </a>
                 )}{' '}
+              </li>
+              <li>
+                <div className="px-4">|</div>
               </li>
               {props.user ? (
                 <li>

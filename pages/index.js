@@ -20,54 +20,93 @@ export default function Home() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold font-main">Read, write, connect</h1>
-      <div>
-        <input
-          className="border-black-300 focus:border-blue-400"
-          placeholder="Search for a book"
-          onChange={(event) => {
-            const title = event.currentTarget.value;
+      <h1 className="text-3xl font-bold font-main my-10 text-center">
+        read, write, connect
+      </h1>
+      <section className="py-10 flex justify-center flex-nowrap">
+        <div className="py-2 flex flex-nowrap w-2/3">
+          <input
+            className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-2/3 mx-8"
+            placeholder="Search for a book"
+            onChange={(event) => {
+              const title = event.currentTarget.value;
 
-            setBookTitle(title);
-          }}
-        />
-        <button onClick={() => handleSearch()}>Search</button>
-      </div>
-      <div>
-        {result.map((item) => {
-          return (
-            <div key={item.id}>
-              <a href={`/books/${item.id}`}>
-                <p>{item.volumeInfo.title}</p>
-                <p>
-                  {item.volumeInfo.authors
-                    ? item.volumeInfo.authors[0]
-                    : 'Unknowen'}
-                </p>
-                <img
-                  src={
-                    item.volumeInfo.imageLinks !== undefined
-                      ? item.volumeInfo.imageLinks.thumbnail
-                      : ''
-                  }
-                  alt="bookcover"
-                />{' '}
-              </a>
-            </div>
-          );
-        })}
-      </div>
-      <br />
-      <br />
-      <br />
-      <div>
-        <Link href="/register">Register</Link>
-      </div>
-      <div>
-        <Link href="/login">Login</Link>
-      </div>
-      {/* }
-      https://www.googleapis.com/books/v1/volumes?q=intitle:der%20fremd+inauthor:camus {*/}
+              setBookTitle(title);
+            }}
+          />
+          <button
+            className=" bg-black w-1/3 text-white rounded"
+            onClick={() => handleSearch()}
+          >
+            Search
+          </button>
+        </div>
+      </section>
+      <section className="py-10 px-8 flex justify-evenly">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 px-8 ">
+          {result.map((item) => {
+            return (
+              <div
+                className="flex justify-center items-center py-4"
+                key={item.id}
+              >
+                <a href={`/books/${item.id}`}>
+                  <div className="flex justify-center items-center">
+                    <img
+                      className="rounded"
+                      src={
+                        item.volumeInfo.imageLinks !== undefined
+                          ? item.volumeInfo.imageLinks.thumbnail
+                          : ''
+                      }
+                      alt="bookcover"
+                    />{' '}
+                  </div>
+                  <div className="my-4 text-center">
+                    <p>{item.volumeInfo.title}</p>
+                    <p>
+                      {item.volumeInfo.authors
+                        ? item.volumeInfo.authors[0]
+                        : 'Unknowen'}
+                    </p>
+                  </div>
+                </a>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      <section className="pb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex justify-center items-center">
+          <div className="text-center">
+            <p className="text-3xl font-bold  my-10 ">read</p>
+            <p>Search for books and put them on your bookstack</p>
+          </div>
+          <div>
+            <div>Img</div>
+          </div>
+          <div>
+            <div>Img</div>
+          </div>
+          <div>
+            <p className="text-3xl font-bold  my-10 text-center ">write</p>
+            <p className="text-center">
+              Loved a book? Imprssed? Did't like it? Write your thoughts down
+              and share them with other readers.{' '}
+            </p>
+          </div>
+
+          <div className="text-center">
+            <p className="text-3xl font-bold font-main my-10 ">connect</p>
+            <p>
+              Find others who love the same book as you and connect with them{' '}
+            </p>
+          </div>
+          <div>
+            <div>Img</div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
