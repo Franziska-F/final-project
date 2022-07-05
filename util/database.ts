@@ -171,7 +171,8 @@ export async function getUserBySessionToken(sessionToken: string) {
   users.id,
   users.username
   FROM
-  users, sessions WHERE sessions.session_token = ${sessionToken} AND sessions.user_id = users.id AND sessions.expiry_timestamp > now();`;
+  users, sessions
+  WHERE sessions.session_token = ${sessionToken} AND sessions.user_id = users.id AND sessions.expiry_timestamp > now();`;
 
   await deleteExpiredSessions();
 
@@ -311,13 +312,11 @@ readingList (user_id, book_id, book_title, book_author)
 VALUES
 (${user_id}, ${book_id}, ${book_title}, ${book_author})
 RETURNING
-
 id,
 user_id,
 book_id,
 book_title,
 book_author
-
 `;
   return readingList;
 }
@@ -337,6 +336,25 @@ export async function getlistedBooksByUserId(userId: number) {
   return readingList;
 }
 
+// Check is Book already exist in Reading list by userId and bookId
+
+export async function getlistedBookByIdAndUserId(
+  userId: number,
+  bookId: string,
+) {
+  if (!userId) return undefined;
+  const [book] = await sql`
+
+
+     SELECT
+      *
+    FROM
+      readingList
+    WHERE
+      user_id = ${userId} AND book_id = ${bookId}
+  `;
+  return book;
+}
 // DELETE book from readingList
 
 export async function deleteBook(id: number) {

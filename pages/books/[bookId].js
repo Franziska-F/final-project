@@ -15,9 +15,10 @@ export default function BookDetails(props) {
 
   useEffect(() => {
     async function getReviewsWithUsernames() {
-      const response = await fetch(`/api/reviews?bookid=${props.book.id}`); // ../api/reviews?bookId=zwfWnAEACAAJ
+      const response = await fetch(`/api/reviews?bookid=${props.book.id}`);
 
       const reviews = await response.json();
+
       setReviewsList(reviews);
     }
     getReviewsWithUsernames().catch(() => {
@@ -51,6 +52,7 @@ export default function BookDetails(props) {
   // add book to the readinglist
 
   async function addBookHandler() {
+    
     const addBookResponse = await fetch(`../api/listedBooks`, {
       method: 'POST',
       headers: {
@@ -136,16 +138,21 @@ export default function BookDetails(props) {
         <h2> See other Reviews </h2>
         {props.user ? (
           <div>
-            {reviewsList.map((listItem) => {
-              return (
-                <div key={`review-${listItem.review_timestamp}`}>
-                  <Link href={`/readers/${listItem.review_user_id}`}>
-                    {listItem.username}
-                  </Link>
-                  <p>{listItem.review}</p>
-                </div>
-              );
-            })}
+            {[...reviewsList]
+              .reverse()
+
+              // .sort((a, b) => b.review_timestamp - a.review_timestamp)
+
+              .map((listItem) => {
+                return (
+                  <div key={`review-${listItem.review_timestamp}`}>
+                    <Link href={`/readers/${listItem.review_user_id}`}>
+                      {listItem.username}
+                    </Link>
+                    <p>{listItem.review} test</p>
+                  </div>
+                );
+              })}
           </div>
         ) : (
           <p>
