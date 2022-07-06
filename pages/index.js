@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Image from 'next/link';
 import { useState } from 'react';
 
 export default function Home() {
@@ -80,18 +80,21 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex justify-center items-center">
           <div className="text-center">
             <p className="text-3xl font-bold  my-10 ">read</p>
-            <p>Search for books and put them on your bookstack</p>
+            <p>search for books and put them on your bookstack</p>
           </div>
           <div>
-            <div>Img</div>
+            <img src="img/reading.jpeg" alt="drawing of a reading person" />
           </div>
           <div>
-            <div>Img</div>
+            <img
+              src="img/write.jpeg"
+              alt="drawing of a person writing on a notebook"
+            />
           </div>
           <div>
             <p className="text-3xl font-bold  my-10 text-center ">write</p>
             <p className="text-center">
-              Loved a book? Imprssed? Did't like it? Write your thoughts down
+              loved a book? imprssed? Did't like it? write your thoughts down
               and share them with other readers.{' '}
             </p>
           </div>
@@ -99,11 +102,11 @@ export default function Home() {
           <div className="text-center">
             <p className="text-3xl font-bold font-main my-10 ">connect</p>
             <p>
-              Find others who love the same book as you and connect with them{' '}
+              find others who love the same book as you and connect with them{' '}
             </p>
           </div>
           <div>
-            <div>Img</div>
+            <img src="img/connect.jpeg" alt="drawing of two people taking" />
           </div>
         </div>
       </section>

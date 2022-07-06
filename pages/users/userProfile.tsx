@@ -17,6 +17,8 @@ export default function UserProfil(props: Props) {
   const [editReview, setEditReview] = useState('');
   const [readingList, setReadingList] = useState(props.readingList);
   const [connectedReaders, setConnectedReaders] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [friends, setfriends] = useState([]);
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -31,7 +33,8 @@ export default function UserProfil(props: Props) {
     async function getConnectedRedadersById() {
       const response = await fetch(`../api/connections`);
       const readers = await response.json();
-      setConnectedReaders(readers);
+      setRequests(readers);
+      console.log(readers);
     }
     getConnectedRedadersById().catch(() => {
       console.log('Reader request fails');
@@ -100,7 +103,8 @@ export default function UserProfil(props: Props) {
 
   // DELETE connected reader
 
-  async function deleteConnectionById(id) {
+  {
+    /* } async function deleteConnectionById(id) {
     const response = await fetch(`../api/connections/${id}`, {
       method: 'DELETE',
       headers: {
@@ -114,6 +118,23 @@ export default function UserProfil(props: Props) {
     );
 
     setConnectedReaders(newState);
+  } { */
+  }
+
+  async function rejectConnection(id: number) {
+    const response = await fetch(`../api/connections/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const rejectionResponse = await response.json();
+    console.log(rejectionResponse);
+    const newState = rejectionResponse.filter(
+      (item) => item.id !== rejectionResponse.id,
+    );
+
+    setRequests(newState);
   }
 
   return (
@@ -204,17 +225,47 @@ export default function UserProfil(props: Props) {
           );
         })}
       </div>
-      {/* }connected readers {*/}
-      <div className="connected-readers">
-        <h2>Connected Readers</h2>
+      {/*} friends {*/}
+      <div className="connected-readers border border-black m-4 p-4 ">
+        <h2>friends</h2>
 
         <div>
-          {connectedReaders.map((item) => {
-            return (
-              <div className="connectionsList" key={`connections-${item.id}`}>
-                <h4>{item.username}</h4>
+          {friends.length ? (
+            friends.map((item) => {
+              return (
+                <div className="connectionsList" key={`connections-${item.id}`}>
+                  <h4>{item.username}</h4>
 
-                <button
+                  <button
+                    onClick={() =>
+                      deleteConnectionById(item.id).catch(() => {
+                        console.log('Delete request fails');
+                      })
+                    }
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })
+          ) : (
+            <div>no friends yet </div>
+          )}
+        </div>
+      </div>
+
+      {/* }friendship requests {*/}
+      <div className=" border border-black m-4 p-4 ">
+        <h2>friendship requests</h2>
+
+        <div>
+          {requests.length ? (
+            requests.map((item) => {
+              return (
+                <div className="connectionsList" key={`connections-${item.id}`}>
+                  <h4>{item.username}</h4>
+
+                  {/* } <button
                   onClick={() =>
                     deleteConnectionById(item.id).catch(() => {
                       console.log('Delete request fails');
@@ -222,10 +273,26 @@ export default function UserProfil(props: Props) {
                   }
                 >
                   Delete
-                </button>
-              </div>
-            );
-          })}
+              </button>  {*/}
+                  <button
+                    className="border border-black rounded p-2 m-2"
+                    onClick={() =>
+                      rejectConnection(item.id).catch(() => {
+                        console.log('Put request failed');
+                      })
+                    }
+                  >
+                    reject
+                  </button>
+                  <button className="border border-black rounded p-2 m-2">
+                    accept
+                  </button>
+                </div>
+              );
+            })
+          ) : (
+            <div>No requests </div>
+          )}
         </div>
       </div>
 
@@ -257,14 +324,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
-  const readers = await getConnectedUserByUserId(user.id);
+  // const readers = await getConnectedUserByUserId(user.id);
 
   if (user) {
     return {
       props: {
         user: user,
         readingList: readingList,
-        readers: readers,
+        //  readers: readers,
       },
     };
   }

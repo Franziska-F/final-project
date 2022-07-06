@@ -378,9 +378,9 @@ export async function addToConnections(
   // timestamp is created by default
 ) {
   const newConnection = await sql`INSERT INTO
-connections (user_id, connected_user_id)
+connections (user_id, connected_user_id, current_status)
 VALUES
-(${user_id}, ${connected_user_id})
+(${user_id}, ${connected_user_id}, 'pen')
 RETURNING
 
 *
@@ -393,11 +393,11 @@ export async function getConnectedUserByUserId(userId) {
   if (!userId) return undefined;
   const connectedUser = await sql<[User | undefined]>`
     SELECT
-      *
+      id, user_id, connected_user_id, current_status
     FROM
       connections
     WHERE
-      user_id = ${userId}
+      user_id = ${userId} AND current_status = 'pen'
   `;
   return connectedUser;
 }
@@ -418,8 +418,9 @@ export async function getReadersWithUsername(userId: string) {
      connections,
     users
     WHERE
-    connections.user_id = ${userId} AND
-    users.id = connections.connected_user_id
+    connections.connected_user_id = ${userId} AND
+    users.id = connections.user_id AND
+    current_status = 'pen'
 
 
 
@@ -439,4 +440,22 @@ export async function deleteConnectionById(id) {
   RETURNING
   *`;
   return deletedConnection;
+}
+
+// UPDATE connection request from pending to reject
+
+export async function rejectConnection(id) {
+  const [rejected] = await sql`
+  UPDATE
+  connections
+SET
+current_status = 'rej'
+WHERE
+id = ${id}
+RETURNING
+id,
+user_id,
+connected_user_id,
+current_status`;
+  return rejected;
 }
