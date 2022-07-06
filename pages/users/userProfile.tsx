@@ -18,7 +18,7 @@ export default function UserProfil(props: Props) {
   const [readingList, setReadingList] = useState(props.readingList);
   const [connectedReaders, setConnectedReaders] = useState([]);
   const [requests, setRequests] = useState([]);
-  const [friends, setfriends] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -38,6 +38,17 @@ export default function UserProfil(props: Props) {
     }
     getConnectedRedadersById().catch(() => {
       console.log('Reader request fails');
+    });
+
+    // GET friends
+    async function getFriends() {
+      const response = await fetch(`../api/friends`);
+      const newState = await response.json();
+      setFriends(newState);
+    }
+
+    getFriends().catch(() => {
+      console.log('GET request fails');
     });
   }, [props.user.id]);
 
@@ -103,9 +114,8 @@ export default function UserProfil(props: Props) {
 
   // DELETE connected reader
 
-  {
-    /* } async function deleteConnectionById(id) {
-    const response = await fetch(`../api/connections/${id}`, {
+  async function deleteFriendById(id) {
+    const response = await fetch(`../api/friends/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -118,10 +128,9 @@ export default function UserProfil(props: Props) {
     );
 
     setConnectedReaders(newState);
-  } { */
   }
 
-  async function rejectConnection(id: number) {
+  async function rejectRequest(id: number) {
     const response = await fetch(`../api/connections/${id}`, {
       method: 'PUT',
       headers: {
@@ -129,12 +138,29 @@ export default function UserProfil(props: Props) {
       },
     });
     const rejectionResponse = await response.json();
-    console.log(rejectionResponse);
+
     const newState = rejectionResponse.filter(
       (item) => item.id !== rejectionResponse.id,
     );
 
     setRequests(newState);
+  }
+
+  // POST friend (accept request)
+
+  async function acceptRequest() {
+    console.log('Test', props.reader[0].user_id);
+    const response = await fetch(`../api/friends`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        connected_user_id: props.reader[0].user_id,
+      }),
+    });
+    console.log('Post', response);
+    const acceptRequestResponse = await response.json();
   }
 
   return (
@@ -237,8 +263,9 @@ export default function UserProfil(props: Props) {
                   <h4>{item.username}</h4>
 
                   <button
+                    className="border border-black m-4 p-4"
                     onClick={() =>
-                      deleteConnectionById(item.id).catch(() => {
+                      deleteFriendById(item.id).catch(() => {
                         console.log('Delete request fails');
                       })
                     }
@@ -277,14 +304,21 @@ export default function UserProfil(props: Props) {
                   <button
                     className="border border-black rounded p-2 m-2"
                     onClick={() =>
-                      rejectConnection(item.id).catch(() => {
+                      rejectRequest(item.id).catch(() => {
                         console.log('Put request failed');
                       })
                     }
                   >
                     reject
                   </button>
-                  <button className="border border-black rounded p-2 m-2">
+                  <button
+                    className="border border-black rounded p-2 m-2"
+                    onClick={
+                      () => acceptRequest() //.catch(() => {
+                      // console.log('Post request fails');
+                      // })
+                    }
+                  >
                     accept
                   </button>
                 </div>
@@ -324,14 +358,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
-  // const readers = await getConnectedUserByUserId(user.id);
-
+  const reader = await getConnectedUserByUserId(user.id);
+  console.log('reader', reader);
   if (user) {
     return {
       props: {
         user: user,
         readingList: readingList,
-        //  readers: readers,
+        reader: reader,
       },
     };
   }
