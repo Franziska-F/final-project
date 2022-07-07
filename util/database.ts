@@ -432,7 +432,7 @@ export async function getReadersWithUsername(userId: string) {
 
 export async function deleteFriendById(id: number) {
   if (!id) return undefined;
-  const deletedConnection = await sql`
+  const [deletedConnection] = await sql`
   DELETE FROM
   friends
   WHERE

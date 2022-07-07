@@ -121,11 +121,10 @@ export default function UserProfil(props: Props) {
       },
     });
     const deletedConnection = await response.json();
-console.log('friend', friends);
-console.log('deletedConnection', deletedConnection)
+    console.log('friend', friends);
+    console.log('deletedConnection', deletedConnection);
 
     const newState = friends.filter((item) => item.id !== deletedConnection.id);
-console.log('newState' , newState)
 
     setFriends(newState);
   }
