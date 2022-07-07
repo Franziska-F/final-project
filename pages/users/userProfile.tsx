@@ -17,6 +17,8 @@ export default function UserProfil(props: Props) {
   const [editReview, setEditReview] = useState('');
   const [readingList, setReadingList] = useState(props.readingList);
   const [connectedReaders, setConnectedReaders] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -31,10 +33,21 @@ export default function UserProfil(props: Props) {
     async function getConnectedRedadersById() {
       const response = await fetch(`../api/connections`);
       const readers = await response.json();
-      setConnectedReaders(readers);
+      setRequests(readers);
     }
     getConnectedRedadersById().catch(() => {
       console.log('Reader request fails');
+    });
+
+    // GET friends
+    async function getFriends() {
+      const response = await fetch(`../api/friends`);
+      const newState = await response.json();
+      setFriends(newState);
+    }
+
+    getFriends().catch(() => {
+      console.log('GET request fails');
     });
   }, [props.user.id]);
 
@@ -100,20 +113,60 @@ export default function UserProfil(props: Props) {
 
   // DELETE connected reader
 
-  async function deleteConnectionById(id) {
-    const response = await fetch(`../api/connections/${id}`, {
+  async function deleteFriendById(id) {
+    const response = await fetch(`../api/friends/${id}`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
     });
     const deletedConnection = await response.json();
+    console.log('friend', friends);
+    console.log('deletedConnection', deletedConnection);
 
-    const newState = deletedConnection.filter(
-      (item) => item.id !== deletedConnection.id,
+    const newState = friends.filter((item) => item.id !== deletedConnection.id);
+
+    setFriends(newState);
+  }
+
+  async function rejectRequest(id: number) {
+    const response = await fetch(`../api/connections/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    const rejectionResponse = await response.json();
+
+    console.log('request', requests);
+    console.log('response', rejectionResponse);
+    const newState = requests.filter(
+      (item) => item.user_id !== rejectionResponse.user_id,
     );
+    console.log('newState', newState);
+    setRequests(newState);
+  }
 
-    setConnectedReaders(newState);
+  // POST friend (accept request)
+
+  async function acceptRequest() {
+    const response = await fetch(`../api/friends`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        connected_user_id: props.reader[0].user_id,
+      }),
+    });
+
+    const acceptRequestResponse = await response.json();
+    console.log('response', acceptRequestResponse);
+    console.log('friends', friends);
+
+    const newState = [...friends, acceptRequestResponse];
+    console.log(newState);
+    setFriends(newState);
   }
 
   return (
@@ -204,17 +257,48 @@ export default function UserProfil(props: Props) {
           );
         })}
       </div>
-      {/* }connected readers {*/}
-      <div className="connected-readers">
-        <h2>Connected Readers</h2>
+      {/*} friends {*/}
+      <div className="connected-readers border border-black m-4 p-4 ">
+        <h2>friends</h2>
 
         <div>
-          {connectedReaders.map((item) => {
-            return (
-              <div className="connectionsList" key={`connections-${item.id}`}>
-                <h4>{item.username}</h4>
+          {friends.length ? (
+            friends.map((item) => {
+              return (
+                <div className="connectionsList" key={`connections-${item.id}`}>
+                  <h4>{item.username}</h4>
 
-                <button
+                  <button
+                    className="border border-black m-4 p-4"
+                    onClick={() =>
+                      deleteFriendById(item.id).catch(() => {
+                        console.log('Delete request fails');
+                      })
+                    }
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })
+          ) : (
+            <div>no friends yet </div>
+          )}
+        </div>
+      </div>
+
+      {/* }friendship requests {*/}
+      <div className=" border border-black m-4 p-4 ">
+        <h2>friendship requests</h2>
+
+        <div>
+          {requests.length ? (
+            requests.map((item) => {
+              return (
+                <div className="connectionsList" key={`connections-${item.id}`}>
+                  <h4>{item.username}</h4>
+
+                  {/* } <button
                   onClick={() =>
                     deleteConnectionById(item.id).catch(() => {
                       console.log('Delete request fails');
@@ -222,10 +306,33 @@ export default function UserProfil(props: Props) {
                   }
                 >
                   Delete
-                </button>
-              </div>
-            );
-          })}
+              </button>  {*/}
+                  <button
+                    className="border border-black rounded p-2 m-2"
+                    onClick={() =>
+                      rejectRequest(item.id).catch(() => {
+                        console.log('Put request failed');
+                      })
+                    }
+                  >
+                    reject
+                  </button>
+                  <button
+                    className="border border-black rounded p-2 m-2"
+                    onClick={
+                      () => acceptRequest() //.catch(() => {
+                      // console.log('Post request fails');
+                      // })
+                    }
+                  >
+                    accept
+                  </button>
+                </div>
+              );
+            })
+          ) : (
+            <div>No requests </div>
+          )}
         </div>
       </div>
 
@@ -257,14 +364,14 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
-  const readers = await getConnectedUserByUserId(user.id);
+  const reader = await getConnectedUserByUserId(user.id);
 
   if (user) {
     return {
       props: {
         user: user,
         readingList: readingList,
-        readers: readers,
+        reader: reader,
       },
     };
   }

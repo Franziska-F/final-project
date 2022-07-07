@@ -378,9 +378,9 @@ export async function addToConnections(
   // timestamp is created by default
 ) {
   const newConnection = await sql`INSERT INTO
-connections (user_id, connected_user_id)
+connections (user_id, connected_user_id, current_status)
 VALUES
-(${user_id}, ${connected_user_id})
+(${user_id}, ${connected_user_id}, 'pen')
 RETURNING
 
 *
@@ -393,11 +393,11 @@ export async function getConnectedUserByUserId(userId) {
   if (!userId) return undefined;
   const connectedUser = await sql<[User | undefined]>`
     SELECT
-      *
+      id, user_id, connected_user_id, current_status
     FROM
       connections
     WHERE
-      user_id = ${userId}
+      connected_user_id = ${userId} AND current_status = 'pen'
   `;
   return connectedUser;
 }
@@ -418,8 +418,9 @@ export async function getReadersWithUsername(userId: string) {
      connections,
     users
     WHERE
-    connections.user_id = ${userId} AND
-    users.id = connections.connected_user_id
+    connections.connected_user_id = ${userId} AND
+    users.id = connections.user_id AND
+    current_status = 'pen'
 
 
 
@@ -427,15 +428,113 @@ export async function getReadersWithUsername(userId: string) {
   return readersWithNames;
 }
 
-// Delete connected reader
+// Delete friend
 
-export async function deleteConnectionById(id) {
+export async function deleteFriendById(id: number) {
+  if (!id) return undefined;
+  const [deletedConnection] = await sql`
+  DELETE FROM
+  friends
+  WHERE
+   id = ${id}
+  RETURNING
+  *
+  `;
+
+  sql`
+  DELETE FROM
+  friends
+  WHERE
+  user_id = deletedConnectionfriend_id AND
+  friend_id = user_id`;
+
+  return deletedConnection;
+}
+
+// UPDATE connection request from pending to reject
+
+export async function rejectConnection(id) {
+  const [rejected] = await sql`
+  UPDATE
+  connections
+SET
+current_status = 'rej'
+WHERE
+id = ${id}
+RETURNING
+id,
+user_id,
+connected_user_id,
+current_status`;
+  return rejected;
+}
+
+// Add user as friend
+
+export async function addToFriends(
+  user_id: User['id'],
+  connected_user_id: number,
+) {
+  const newFriend = await sql`INSERT INTO
+friends (user_id, friend_id)
+
+
+VALUES
+(${user_id}, ${connected_user_id})
+
+
+RETURNING
+*
+
+`;
+  return newFriend;
+}
+
+// get friends with username
+
+export async function getFriendsWithUsername(userId: string) {
+  if (!userId) return undefined;
+  const friendsWithNames = await sql`
+
+
+    SELECT
+
+    friends.friend_id AS friend_id,
+    users.username AS username,
+    users.id AS user_id,
+    friends.id AS id
+
+
+    FROM
+    friends,
+    users
+    WHERE
+    (friends.user_id = ${userId} OR
+  friends.friend_id = ${userId})
+  AND
+  (users.id = friends.user_id OR
+  users.id = friends.friend_id) AND
+  users.id != ${userId}
+
+
+
+
+  `;
+  return friendsWithNames;
+}
+
+// Delete accepted request
+
+export async function deleteAcceptedRequest(id, connected_id) {
   if (!id) return undefined;
   const deletedConnection = await sql`
-  DELETE FROM
+ DELETE FROM
   connections
   WHERE
-  id = ${id}
+  user_id = ${id} AND
+  connected_user_id = ${connected_id}
+  AND
+  current_status = 'pen'
   RETURNING
   *`;
   return deletedConnection;

@@ -16,7 +16,7 @@ export default function Readers(props) {
     });
   }, [props.reader.id]);
 
-  async function connectWithReader() {
+  async function makeRequest() {
     const response = await fetch(`../api/connections`, {
       method: 'POST',
       headers: {
@@ -48,7 +48,7 @@ export default function Readers(props) {
       <div>
         <button
           onClick={() =>
-            connectWithReader().catch(() => {
+            makeRequest().catch(() => {
               console.log('Post request fails');
             })
           }
