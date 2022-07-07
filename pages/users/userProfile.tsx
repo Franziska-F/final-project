@@ -34,7 +34,6 @@ export default function UserProfil(props: Props) {
       const response = await fetch(`../api/connections`);
       const readers = await response.json();
       setRequests(readers);
-      console.log(readers);
     }
     getConnectedRedadersById().catch(() => {
       console.log('Reader request fails');
@@ -139,17 +138,18 @@ export default function UserProfil(props: Props) {
     });
     const rejectionResponse = await response.json();
 
-    const newState = rejectionResponse.filter(
-      (item) => item.id !== rejectionResponse.id,
+    console.log('request', requests);
+    console.log('response', rejectionResponse);
+    const newState = requests.filter(
+      (item) => item.user_id !== rejectionResponse.user_id,
     );
-
+    console.log('newState', newState);
     setRequests(newState);
   }
 
   // POST friend (accept request)
 
   async function acceptRequest() {
-    console.log('Test', props.reader[0].user_id);
     const response = await fetch(`../api/friends`, {
       method: 'POST',
       headers: {
@@ -159,7 +159,7 @@ export default function UserProfil(props: Props) {
         connected_user_id: props.reader[0].user_id,
       }),
     });
-    console.log('Post', response);
+
     const acceptRequestResponse = await response.json();
   }
 
@@ -359,7 +359,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
   const reader = await getConnectedUserByUserId(user.id);
-  console.log('reader', reader);
+
   if (user) {
     return {
       props: {
