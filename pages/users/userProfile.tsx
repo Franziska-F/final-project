@@ -121,12 +121,13 @@ export default function UserProfil(props: Props) {
       },
     });
     const deletedConnection = await response.json();
+console.log('friend', friends);
+console.log('deletedConnection', deletedConnection)
 
-    const newState = deletedConnection.filter(
-      (item) => item.id !== deletedConnection.id,
-    );
+    const newState = friends.filter((item) => item.id !== deletedConnection.id);
+console.log('newState' , newState)
 
-    setConnectedReaders(newState);
+    setFriends(newState);
   }
 
   async function rejectRequest(id: number) {
@@ -161,6 +162,12 @@ export default function UserProfil(props: Props) {
     });
 
     const acceptRequestResponse = await response.json();
+    console.log('response', acceptRequestResponse);
+    console.log('friends', friends);
+
+    const newState = [...friends, acceptRequestResponse];
+    console.log(newState);
+    setFriends(newState);
   }
 
   return (

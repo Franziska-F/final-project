@@ -6,23 +6,14 @@ import {
 } from '../../../util/database';
 
 export default async function handler(req, res) {
- {/*} if (req.method === 'GET') {
+  if (req.method === 'GET') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
 
     const pendingRequests = await getReadersWithUsername(user.id);
     // const pendingRequests = await getConnectedUserByUserId(user.id);
 
     return res.status(200).json(pendingRequests);
-  } {*/}
-
-    if (req.method === 'GET') {
-      const user = await getUserBySessionToken(req.cookies.sessionToken);
-
-      const pendingRequests = await getReadersWithUsername(user.id);
-      // const pendingRequests = await getConnectedUserByUserId(user.id);
-
-      return res.status(200).json(pendingRequests);
-    }
+  }
 
   if (req.method === 'POST') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);

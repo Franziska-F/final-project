@@ -430,15 +430,24 @@ export async function getReadersWithUsername(userId: string) {
 
 // Delete friend
 
-export async function deleteFriendById(id) {
+export async function deleteFriendById(id: number) {
   if (!id) return undefined;
   const deletedConnection = await sql`
   DELETE FROM
   friends
   WHERE
-  id = ${id}
+   id = ${id}
   RETURNING
-  *`;
+  *
+  `;
+
+  sql`
+  DELETE FROM
+  friends
+  WHERE
+  user_id = deletedConnectionfriend_id AND
+  friend_id = user_id`;
+
   return deletedConnection;
 }
 
@@ -469,8 +478,10 @@ export async function addToFriends(
   const newFriend = await sql`INSERT INTO
 friends (user_id, friend_id)
 
+
 VALUES
-( ${user_id}, ${connected_user_id} )
+(${user_id}, ${connected_user_id})
+
 
 RETURNING
 *
@@ -484,6 +495,8 @@ RETURNING
 export async function getFriendsWithUsername(userId: string) {
   if (!userId) return undefined;
   const friendsWithNames = await sql`
+
+
     SELECT
 
     friends.friend_id AS friend_id,
@@ -491,12 +504,19 @@ export async function getFriendsWithUsername(userId: string) {
     users.id AS user_id,
     friends.id AS id
 
+
     FROM
     friends,
     users
     WHERE
-    friends.user_id = ${userId} AND
-    users.id = friends.friend_id
+    (friends.user_id = ${userId} OR
+  friends.friend_id = ${userId})
+  AND
+  (users.id = friends.user_id OR
+  users.id = friends.friend_id) AND
+  users.id != ${userId}
+
+
 
 
   `;
