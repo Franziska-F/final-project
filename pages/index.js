@@ -76,7 +76,7 @@ export default function Home() {
           })}
         </div>
       </section>
-      <section className="pb-10">
+      <section className="pb-10 px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex justify-center items-center">
           <div className="text-center">
             <p className="text-3xl font-bold  my-10 ">read</p>

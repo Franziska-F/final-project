@@ -49,7 +49,7 @@ export default function UserProfil(props: Props) {
     getFriends().catch(() => {
       console.log('GET request fails');
     });
-  }, [props.user.id]);
+  }, [props.user.id, friends]);
 
   // DELETE reviews // reviews/id
   async function deleteReviewById(id: number) {
@@ -143,7 +143,7 @@ export default function UserProfil(props: Props) {
     const newState = requests.filter(
       (item) => item.user_id !== rejectionResponse.user_id,
     );
-    console.log('newState', newState);
+
     setRequests(newState);
   }
 
@@ -156,7 +156,7 @@ export default function UserProfil(props: Props) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        connected_user_id: props.reader[0].user_id,
+        connected_user_id: props.reader[0].user_id, // CHange this
       }),
     });
 
@@ -365,7 +365,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
   const reader = await getConnectedUserByUserId(user.id);
-
+console.log(reader);
   if (user) {
     return {
       props: {
