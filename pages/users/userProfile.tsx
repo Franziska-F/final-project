@@ -1,9 +1,7 @@
 import { GetServerSidePropsContext } from 'next';
 import { useEffect, useState } from 'react';
 import {
-  getConnectedUserByUserId,
   getlistedBooksByUserId,
-  getUserById,
   getUserBySessionToken,
   User,
 } from '../../util/database';
@@ -16,7 +14,7 @@ export default function UserProfil(props: Props) {
   const [aktiveId, setAktiveId] = useState(undefined);
   const [editReview, setEditReview] = useState('');
   const [readingList, setReadingList] = useState(props.readingList);
-  const [connectedReaders, setConnectedReaders] = useState([]);
+
   const [requests, setRequests] = useState([]);
   const [friends, setFriends] = useState([]);
 
@@ -149,35 +147,65 @@ export default function UserProfil(props: Props) {
 
   // POST friend (accept request)
 
-  async function acceptRequest() {
+  async function acceptRequest(connected_user_id) {
     const response = await fetch(`../api/friends`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        connected_user_id: props.reader[0].user_id, // CHange this
+        connected_user_id: connected_user_id, // CHange this
       }),
     });
 
     const acceptRequestResponse = await response.json();
-    console.log('response', acceptRequestResponse);
-    console.log('friends', friends);
 
     const newState = [...friends, acceptRequestResponse];
-    console.log(newState);
+
     setFriends(newState);
   }
 
   return (
     <div>
-      <div className="book-list">
-        <h1>Hallo, {props.user.username}</h1>
-        <h2>Your reviews</h2>
-        {userReviews.map((listItem) => {
-          return listItem.id === aktiveId ? (
-            <div key={listItem.id}>
-              <div>
+      <h1 className="p-2 text-2xl text-center mt-20">
+        hello, {props.user.username}
+      </h1>
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-20">
+        <div>Img</div>
+        <div>
+          <h2 className="text-xl p-2 mb-4 text-center">your bookstack</h2>
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-8 px-8 items-center">
+            {readingList.map((item) => {
+              return (
+                <div
+                  className="grid justify-items-center"
+                  key={`readingList-${item.id}`}
+                >
+                  <h4 className="font-semibold">{item.book_title}</h4>
+                  <h4>{item.book_author}</h4>
+                  <button
+                    className="bg-black w-1/5 text-sm px-1 text-white rounded"
+                    onClick={() =>
+                      deleteBookById(item.id).catch(() => {
+                        console.log('Delete request fails');
+                      })
+                    }
+                  >
+                    Delete
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+      <section className="my-20">
+        <h2 className="text-center text-2xl">Your reviews</h2>
+
+        <div className="grid grid-cols-2 md:grid-cols-2 gap-x-4 gap-y-8 px-8 ">
+          {userReviews.map((listItem) => {
+            return listItem.id === aktiveId ? (
+              <div className="m-8 p-4 text-center text-md" key={listItem.id}>
                 <h3>{listItem.title}</h3>
                 <label htmlFor="review">
                   <textarea
@@ -189,8 +217,7 @@ export default function UserProfil(props: Props) {
                     }
                   />
                 </label>
-              </div>
-              <div>
+
                 <button
                   onClick={() => {
                     setAktiveId(undefined);
@@ -202,8 +229,7 @@ export default function UserProfil(props: Props) {
                 >
                   Save
                 </button>
-              </div>
-              <div>
+
                 <button
                   onClick={() => {
                     deleteReviewById(listItem.id).catch(() => {
@@ -214,164 +240,142 @@ export default function UserProfil(props: Props) {
                   Delete
                 </button>
               </div>
-            </div>
-          ) : (
-            <>
-              <div key={listItem.id}>
-                <h3>{listItem.book_title}</h3>
-                <label htmlFor="review">
-                  <textarea
-                    id="review"
-                    name="review"
-                    value={listItem.review}
-                    disabled
-                    onChange={(event) =>
-                      setEditReview(event.currentTarget.value)
-                    }
-                  />
-                </label>
-              </div>
+            ) : (
+              <>
+                <div key={listItem.id}>
+                  <h3>{listItem.book_title}</h3>
+                  <label htmlFor="review">
+                    <textarea
+                      id="review"
+                      name="review"
+                      value={listItem.review}
+                      disabled
+                      onChange={(event) =>
+                        setEditReview(event.currentTarget.value)
+                      }
+                    />
+                  </label>
+                </div>
 
-              <div>
-                <button
-                  onClick={() => {
-                    setAktiveId(listItem.id);
-                    setEditReview(listItem.review);
-                  }}
-                >
-                  Edit
-                </button>
-              </div>
-              <div>
-                <button
-                  onClick={() => {
-                    deleteReviewById(listItem.id).catch(() => {
-                      console.log('Delete request fails');
-                    });
-                  }}
-                >
-                  Delete
-                </button>
-              </div>
-            </>
-          );
-        })}
-      </div>
-      {/*} friends {*/}
-      <div className="connected-readers border border-black m-4 p-4 ">
-        <h2>friends</h2>
-
-        <div>
-          {friends.length ? (
-            friends.map((item) => {
-              return (
-                <div className="connectionsList" key={`connections-${item.id}`}>
-                  <h4>{item.username}</h4>
-
+                <div>
                   <button
-                    className="border border-black m-4 p-4"
-                    onClick={() =>
-                      deleteFriendById(item.id).catch(() => {
+                    onClick={() => {
+                      setAktiveId(listItem.id);
+                      setEditReview(listItem.review);
+                    }}
+                  >
+                    Edit
+                  </button>
+                </div>
+                <div>
+                  <button
+                    onClick={() => {
+                      deleteReviewById(listItem.id).catch(() => {
                         console.log('Delete request fails');
-                      })
-                    }
+                      });
+                    }}
                   >
                     Delete
                   </button>
                 </div>
-              );
-            })
-          ) : (
-            <div>no friends yet </div>
-          )}
+              </>
+            );
+          })}
         </div>
-      </div>
+      </section>
+      <section>
+        {/*} friends {*/}
+        <div className="connected-readers border border-black m-4 p-4 ">
+          <h2>friends</h2>
 
-      {/* }friendship requests {*/}
-      <div className=" border border-black m-4 p-4 ">
-        <h2>friendship requests</h2>
-
-        <div>
-          {requests.length ? (
-            requests.map((item) => {
-              return (
-                <div className="connectionsList" key={`connections-${item.id}`}>
-                  <h4>{item.username}</h4>
-
-                  {/* } <button
-                  onClick={() =>
-                    deleteConnectionById(item.id).catch(() => {
-                      console.log('Delete request fails');
-                    })
-                  }
-                >
-                  Delete
-              </button>  {*/}
-                  <button
-                    className="border border-black rounded p-2 m-2"
-                    onClick={() =>
-                      rejectRequest(item.id).catch(() => {
-                        console.log('Put request failed');
-                      })
-                    }
+          <div>
+            {friends.length ? (
+              friends.map((item) => {
+                return (
+                  <div
+                    className="connectionsList"
+                    key={`connections-${item.id}`}
                   >
-                    reject
-                  </button>
-                  <button
-                    className="border border-black rounded p-2 m-2"
-                    onClick={
-                      () => acceptRequest() //.catch(() => {
-                      // console.log('Post request fails');
-                      // })
-                    }
-                  >
-                    accept
-                  </button>
-                </div>
-              );
-            })
-          ) : (
-            <div>No requests </div>
-          )}
-        </div>
-      </div>
+                    <h4>{item.username}</h4>
 
-      {readingList.map((item) => {
-        return (
-          <div className="readingList" key={`readingList-${item.id}`}>
-            <h2>Your reading list</h2>
-            <h4>{item.book_title}</h4>
-            <h4>{item.book_author}</h4>
-            <button
-              onClick={() =>
-                deleteBookById(item.id).catch(() => {
-                  console.log('Delete request fails');
-                })
-              }
-            >
-              Delete
-            </button>
+                    <button
+                      className="border border-black m-4 p-4"
+                      onClick={() =>
+                        deleteFriendById(item.id).catch(() => {
+                          console.log('Delete request fails');
+                        })
+                      }
+                    >
+                      Delete
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <div>no friends yet </div>
+            )}
           </div>
-        );
-      })}
+        </div>
+
+        {/* }friendship requests {*/}
+        <div className=" border border-black m-4 p-4 ">
+          <h2>friendship requests</h2>
+
+          <div>
+            {requests.length ? (
+              requests.map((item) => {
+                return (
+                  <div
+                    className="connectionsList"
+                    key={`connections-${item.id}`}
+                  >
+                    <h4>{item.username}</h4>
+
+                    <button
+                      className="border border-black rounded p-2 m-2"
+                      onClick={() =>
+                        rejectRequest(item.id).catch(() => {
+                          console.log('Put request failed');
+                        })
+                      }
+                    >
+                      reject
+                    </button>
+                    <button
+                      className="border border-black rounded p-2 m-2"
+                      onClick={
+                        () => acceptRequest(item.user_id) //.catch(() => {
+                        // console.log('Post request fails');
+                        // })
+                      }
+                    >
+                      accept
+                    </button>
+                  </div>
+                );
+              })
+            ) : (
+              <div>No requests </div>
+            )}
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
+
   const responseReadingList = await getlistedBooksByUserId(user.id);
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
-  const reader = await getConnectedUserByUserId(user.id);
-console.log(reader);
   if (user) {
     return {
       props: {
         user: user,
         readingList: readingList,
-        reader: reader,
       },
     };
   }

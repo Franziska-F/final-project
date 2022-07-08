@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Header(props) {
   return (
-    <header>
+    <header className="sticky top-0 bg-white">
       <div className="flex flex-row items-center text-base pt-4 px-4 border-b border-black">
         <div className="basis-1/4 text-2xl">the bookclub</div>
         <nav className="flex justify-between basis-3/4">

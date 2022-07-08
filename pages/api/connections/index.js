@@ -1,6 +1,5 @@
 import {
   addToConnections,
-  getConnectedUserByUserId,
   getReadersWithUsername,
   getUserBySessionToken,
 } from '../../../util/database';

@@ -3,10 +3,6 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getUserBySessionToken } from '../../util/database';
 
-const wrapper = css`
-  margin: 0 auto;
-  width: 600px;
-`;
 // GET all reviews to one book
 
 export default function BookDetails(props) {
@@ -52,7 +48,6 @@ export default function BookDetails(props) {
   // add book to the readinglist
 
   async function addBookHandler() {
-    
     const addBookResponse = await fetch(`../api/listedBooks`, {
       method: 'POST',
       headers: {
@@ -69,114 +64,136 @@ export default function BookDetails(props) {
     return <h1>Book not found</h1>;
   }
   return (
-    <section css={wrapper}>
-      {' '}
-      <div>
-        <p>{props.book.volumeInfo.title}</p>
-        <p>
+    <div>
+      <section>
+        {' '}
+        <h2 className="p-2 text-2xl text-center mt-20">
+          {props.book.volumeInfo.title}
+        </h2>
+        <h3 className="p-2 text-xl text-center">
           {props.book.volumeInfo.authors
             ? props.book.volumeInfo.authors[0]
             : 'Unknowen'}
-        </p>
-        <img
-          src={
-            props.book.volumeInfo.imageLinks !== undefined
-              ? props.book.volumeInfo.imageLinks.thumbnail
-              : ''
-          }
-          alt="bookcover"
-        />{' '}
-      </div>
-      <br />
-      <div>
-        {' '}
-        <button
-          onClick={() =>
-            addBookHandler().catch(() => {
-              console.log('Post request fails');
-            })
-          }
-        >
-          Add to your reading list
-        </button>
-      </div>
-      <div>
-        <h2> Write a review </h2>
-        <div>
-          {props.user ? (
-            <>
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-20">
+          <div>Img</div>
+          <div className="flex justify-evenly">
+            <div className="self-end">
               {' '}
-              <label htmlFor="review">
-                <textarea
-                  id="review"
-                  name="review"
-                  value={review}
-                  onChange={(event) => {
-                    setReview(event.currentTarget.value);
-                  }}
-                />
-              </label>
-              <div>
-                <button
-                  onClick={() => {
-                    createReviewHandler();
-                    setReview('');
-                  }}
-                >
-                  Submit
-                </button>
-              </div>
-            </>
-          ) : (
-            <div>
-              <p>Please log in or register to write a review</p>
+              <button
+                className="bg-black w-full p-2 text-white rounded"
+                onClick={() =>
+                  addBookHandler().catch(() => {
+                    console.log('Post request fails');
+                  })
+                }
+              >
+                put on your bookstack
+              </button>
             </div>
+            <img
+              className="rounded w-1/3"
+              src={
+                props.book.volumeInfo.imageLinks !== undefined
+                  ? props.book.volumeInfo.imageLinks.thumbnail
+                  : ''
+              }
+              alt="bookcover"
+            />{' '}
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="text-center flex justify-center flex-col items-center">
+          <h2 className="p-2 text-2xl mt-20">do your know this book? </h2>
+          <h3 className="p-2 mb-10 text-lg">share your thoughts</h3>
+          <div className="m-4 w-2/3 ">
+            {props.user ? (
+              <>
+                {' '}
+                <label htmlFor="review">
+                  <textarea
+                    className="border border-black h-64 w-full mx-4 "
+                    id="review"
+                    name="review"
+                    value={review}
+                    onChange={(event) => {
+                      setReview(event.currentTarget.value);
+                    }}
+                  />
+                </label>
+                <div>
+                  <button
+                    className=" bg-black w-1/2 p-2 text-white rounded mt-10"
+                    onClick={() => {
+                      createReviewHandler();
+                      setReview('');
+                    }}
+                  >
+                    Submit
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div>
+                <p>lease log in or register to write a review</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+      <section className="flex justify-evenly items-center">
+        <div>
+          <h2 className="p-2 my-20 text-2xl text-center">
+            {' '}
+            see what other readers wrote about this book{' '}
+          </h2>
+          {props.user ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 px-8 ">
+              {[...reviewsList]
+                .reverse()
+
+                // .sort((a, b) => b.review_timestamp - a.review_timestamp)
+
+                .map((listItem) => {
+                  return (
+                    <div
+                      className="m-8 p-4 text-center text-md"
+                      key={`review-${listItem.review_timestamp}`}
+                    >
+                      <Link href={`/readers/${listItem.review_user_id}`}>
+                        {listItem.username}
+                      </Link>
+                      <p className="mt-4">{listItem.review}</p>
+                    </div>
+                  );
+                })}
+            </div>
+          ) : (
+            <p>
+              There is <span>1</span> review, please log in or register to read
+              id
+            </p>
+          )}
+
+          {!props.user ? (
+            <div>
+              <div>
+                {' '}
+                <Link href={`/login?returnTo=/books/${props.book.id}`}>
+                  Log in
+                </Link>{' '}
+              </div>
+              <div>
+                <Link href="/register">Register</Link>{' '}
+              </div>
+            </div>
+          ) : (
+            <span />
           )}
         </div>
-      </div>
-      <div>
-        <h2> See other Reviews </h2>
-        {props.user ? (
-          <div>
-            {[...reviewsList]
-              .reverse()
-
-              // .sort((a, b) => b.review_timestamp - a.review_timestamp)
-
-              .map((listItem) => {
-                return (
-                  <div key={`review-${listItem.review_timestamp}`}>
-                    <Link href={`/readers/${listItem.review_user_id}`}>
-                      {listItem.username}
-                    </Link>
-                    <p>{listItem.review} test</p>
-                  </div>
-                );
-              })}
-          </div>
-        ) : (
-          <p>
-            There is <span>1</span> review, please log in or register to read id
-          </p>
-        )}
-
-        {!props.user ? (
-          <div>
-            <div>
-              {' '}
-              <Link href={`/login?returnTo=/books/${props.book.id}`}>
-                Log in
-              </Link>{' '}
-            </div>
-            <div>
-              <Link href="/register">Register</Link>{' '}
-            </div>
-          </div>
-        ) : (
-          <span />
-        )}
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
 
