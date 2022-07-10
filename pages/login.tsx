@@ -50,37 +50,51 @@ export default function Login(props: Props) {
   return (
     <div>
       {' '}
-      <h2>Login</h2>
-      <div>
-        <label>
-          <input
-            placeholder="username"
-            value={username}
-            onChange={(event) => {
-              setUsername(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
-      </div>
-      <div>
-        <label>
-          <input
-            placeholder="password"
-            value={password}
-            type="password"
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
-      </div>
-      <div>
-        <button onClick={() => loginHandler()}>Login</button>
-        {errors.length
-          ? errors.map((error) => (
-              <span key={`error-${error.message}`}>{error.message}</span>
-            ))
-          : ''}
+      <h2 className="text-center text-2xl my-10 md:my-14 ">Login</h2>
+      <div className="
+      flex justify-center items-center"
+
+      >
+        <div>
+
+            <label>
+              <input
+                className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-2/3 m-4"
+                placeholder="username"
+                value={username}
+                onChange={(event) => {
+                  setUsername(event.currentTarget.value);
+                }}
+              />
+            </label>{' '}
+
+
+            <label>
+              <input
+                className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-2/3 m-4"
+                placeholder="password"
+                value={password}
+                type="password"
+                onChange={(event) => {
+                  setPassword(event.currentTarget.value);
+                }}
+              />
+            </label>{' '}
+
+          <div>
+            <button
+              className="bg-black w-2/4 text-sm p-2 text-white rounded"
+              onClick={() => loginHandler()}
+            >
+              Login
+            </button>
+          </div>
+          {errors.length
+            ? errors.map((error) => (
+                <span key={`error-${error.message}`}>{error.message}</span>
+              ))
+            : ''}
+        </div>
       </div>
     </div>
   );

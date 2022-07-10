@@ -5,6 +5,7 @@ export default function Readers(props) {
   const [readerReviews, setReaderReviews] = useState([]);
 
   useEffect(() => {
+    // GET reviews
     async function getReviewsByUserId() {
       const response = await fetch(`/api/reviews?userid=${props.reader.id}`);
       const reviews = await response.json();
@@ -30,39 +31,98 @@ export default function Readers(props) {
 
   return (
     <>
-      <h3>This is {props.reader.username}'s profile</h3>
-
-      <h2>{props.reader.username}'s reviews</h2>
-      {readerReviews.map((listItem) => {
-        return (
-          <div key={listItem.id}>
-            <div>
-              <h3>{listItem.book_title}</h3>
-              <p id="review" name="review">
-                {listItem.review}
-              </p>
-            </div>
+      <section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
+          <div className="self-center">
+            <h3 className="text-center text-2xl mt-10 md:mt-0">
+              wellcome to {props.reader.username}'s reading room
+            </h3>
           </div>
-        );
-      })}
-      <div>
-        <button
-          onClick={() =>
-            makeRequest().catch(() => {
-              console.log('Post request fails');
-            })
-          }
-        >
-          Connect with {props.reader.username}
-        </button>
-      </div>
+          <div className="max-w-2xl max-h-2xl">
+            <img
+              src="../img/reading_room.jpeg"
+              alt="drawing of a cosy room with a chair, a window, a small table and a bookshelf"
+              className="w-full"
+            />
+          </div>
+        </div>
+      </section>
+
+      <section className="my-20">
+        <h2 className="text-center text-2xl">
+          {props.reader.username}'s reviews
+        </h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-8 px-20 mt-14">
+          {readerReviews.map((listItem) => {
+            return (
+              <div
+                className="text-center flex justify-center flex-col items-center"
+                key={listItem.id}
+              >
+                <div>
+                  <h3 className="text-center my-4">{listItem.book_title}</h3>
+                  <div>
+                    <label htmlFor="review">
+                      <textarea
+                        className="border border-black h-4/5 w-full mx-4 my-2 text-center"
+                        id="review"
+                        name="review"
+                        value={listItem.review}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      <section className="py-12">
+        <h3 className="text-center text-2xl mb-10 md:mb-16">
+          connect with {props.reader.username}
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
+          <div className="place-self-center">
+            <button
+              className="bg-black w-full text-sm p-2 text-white rounded"
+              onClick={() =>
+                makeRequest().catch(() => {
+                  console.log('Post request fails');
+                })
+              }
+            >
+              {' '}
+              Send {props.reader.username} a friendship request
+            </button>
+          </div>
+          <div>
+            <p>
+              connect with other readers to see their friends, their email
+              address and location
+            </p>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
+          <div>
+            <h3>contact</h3>
+            <h4>clio@example.com</h4>
+            <h4>location</h4>
+          </div>
+          <div>
+            <h3>{props.reader.username}' friends</h3>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
 
 export async function getServerSideProps(context) {
   const reader = await getUserById(context.query.userId);
-  //const responseReadingList = await getlistedBooksByUserId(user.id);
+  // const responseReadingList = await getlistedBooksByUserId(user.id);
 
   // const readingList = await JSON.parse(JSON.stringify(responseReadingList));
 
