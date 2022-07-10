@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext } from 'next';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
   getlistedBooksByUserId,
@@ -42,6 +43,7 @@ export default function UserProfil(props: Props) {
       const response = await fetch(`../api/friends`);
       const newState = await response.json();
       setFriends(newState);
+
     }
 
     getFriends().catch(() => {
@@ -67,7 +69,7 @@ export default function UserProfil(props: Props) {
   }
 
   // Uptdate reviews
-  async function updateReview(id: number, editReview) {
+  async function updateReview(id: number, editReview: string) {
     const response = await fetch(`../api/reviews/${id}`, {
       method: 'PUT',
       headers: {
@@ -95,7 +97,7 @@ export default function UserProfil(props: Props) {
 
   // DELETE books from the reading list
 
-  async function deleteBookById(id) {
+  async function deleteBookById(id: number) {
     const response = await fetch(`../api/listedBooks/${id}`, {
       method: 'DELETE',
       headers: {
@@ -111,7 +113,7 @@ export default function UserProfil(props: Props) {
 
   // DELETE connected reader
 
-  async function deleteFriendById(id) {
+  async function deleteFriendById(id: number) {
     const response = await fetch(`../api/friends/${id}`, {
       method: 'DELETE',
       headers: {
@@ -147,14 +149,14 @@ export default function UserProfil(props: Props) {
 
   // POST friend (accept request)
 
-  async function acceptRequest(connected_user_id) {
+  async function acceptRequest(connected_user_id: number) {
     const response = await fetch(`../api/friends`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        connected_user_id: connected_user_id, // CHange this
+        connected_user_id: connected_user_id,
       }),
     });
 
@@ -170,11 +172,19 @@ export default function UserProfil(props: Props) {
       <h1 className="p-2 text-2xl text-center mt-20">
         hello, {props.user.username}
       </h1>
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-20">
-        <div>Img</div>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-10">
         <div>
-          <h2 className="text-xl p-2 mb-4 text-center">your bookstack</h2>
+          <img
+            src="../img/book_stack.jpeg"
+            alt="drawing of a stack of books"
+            className="w-full"
+          />
+        </div>
+
+        <div>
           <div className="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-8 px-8 items-center">
+            <h2 className="text-center text-2xl pt-10">your bookstack</h2>
             {readingList.map((item) => {
               return (
                 <div
@@ -191,7 +201,7 @@ export default function UserProfil(props: Props) {
                       })
                     }
                   >
-                    Delete
+                    delete
                   </button>
                 </div>
               );
@@ -199,164 +209,176 @@ export default function UserProfil(props: Props) {
           </div>
         </div>
       </section>
+      {/*} reviews {*/}
       <section className="my-20">
-        <h2 className="text-center text-2xl">Your reviews</h2>
+        <h2 className="text-center text-2xl">your reviews</h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-x-4 gap-y-8 px-8 ">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-8 px-20 mt-14">
           {userReviews.map((listItem) => {
             return listItem.id === aktiveId ? (
-              <div className="m-8 p-4 text-center text-md" key={listItem.id}>
-                <h3>{listItem.title}</h3>
-                <label htmlFor="review">
-                  <textarea
-                    id="review"
-                    name="review"
-                    value={editReview}
-                    onChange={(event) =>
-                      setEditReview(event.currentTarget.value)
-                    }
-                  />
-                </label>
+              <div className="text-center flex justify-center flex-col items-center">
+                <div key={listItem.id}>
+                  <h3 className="text-center my-4">{listItem.book_title}</h3>
+                  <div>
+                    <label htmlFor="review">
+                      <textarea
+                        className="border border-black h-4/5 w-full mx-4 my-2"
+                        id="review"
+                        name="review"
+                        value={editReview}
+                        onChange={(event) =>
+                          setEditReview(event.currentTarget.value)
+                        }
+                      />
+                    </label>
 
-                <button
-                  onClick={() => {
-                    setAktiveId(undefined);
-                    setEditReview(listItem.review);
-                    updateReview(listItem.id, editReview).catch(() => {
-                      console.log('Put request fails');
-                    });
-                  }}
-                >
-                  Save
-                </button>
+                    <button
+                      className="bg-black w-1/4 text-sm px-1 m-1 text-white rounded"
+                      onClick={() => {
+                        setAktiveId(undefined);
+                        setEditReview(listItem.review);
+                        updateReview(listItem.id, editReview).catch(() => {
+                          console.log('Put request fails');
+                        });
+                      }}
+                    >
+                      save
+                    </button>
 
-                <button
-                  onClick={() => {
-                    deleteReviewById(listItem.id).catch(() => {
-                      console.log('Delete request fails');
-                    });
-                  }}
-                >
-                  Delete
-                </button>
+                    <button
+                      className="bg-black w-1/4 text-sm px-1 m-1 text-white rounded"
+                      onClick={() => {
+                        deleteReviewById(listItem.id).catch(() => {
+                          console.log('Delete request fails');
+                        });
+                      }}
+                    >
+                      delete
+                    </button>
+                  </div>
+                </div>
               </div>
             ) : (
-              <>
+              <div className="text-center flex justify-center flex-col items-center">
                 <div key={listItem.id}>
-                  <h3>{listItem.book_title}</h3>
-                  <label htmlFor="review">
-                    <textarea
-                      id="review"
-                      name="review"
-                      value={listItem.review}
-                      disabled
-                      onChange={(event) =>
-                        setEditReview(event.currentTarget.value)
-                      }
-                    />
-                  </label>
-                </div>
+                  <h3 className="text-center my-4">{listItem.book_title}</h3>
+                  <div>
+                    <label htmlFor="review">
+                      <textarea
+                        className=" h-4/5 w-full mx-4 my-2"
+                        id="review"
+                        name="review"
+                        value={listItem.review}
+                        disabled
+                        onChange={(event) =>
+                          setEditReview(event.currentTarget.value)
+                        }
+                      />
+                    </label>
 
-                <div>
-                  <button
-                    onClick={() => {
-                      setAktiveId(listItem.id);
-                      setEditReview(listItem.review);
-                    }}
-                  >
-                    Edit
-                  </button>
+                    <button
+                      className="bg-black w-1/4 text-sm px-1 m-1 text-white rounded"
+                      onClick={() => {
+                        setAktiveId(listItem.id);
+                        setEditReview(listItem.review);
+                      }}
+                    >
+                      edit
+                    </button>
+
+                    <button
+                      className="bg-black w-1/4 text-sm px-1 m-1 text-white rounded"
+                      onClick={() => {
+                        deleteReviewById(listItem.id).catch(() => {
+                          console.log('Delete request fails');
+                        });
+                      }}
+                    >
+                      delete
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <button
-                    onClick={() => {
-                      deleteReviewById(listItem.id).catch(() => {
-                        console.log('Delete request fails');
-                      });
-                    }}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
+              </div>
             );
           })}
         </div>
       </section>
-      <section>
-        {/*} friends {*/}
-        <div className="connected-readers border border-black m-4 p-4 ">
-          <h2>friends</h2>
-
+      <section className="mt-20">
+        {/* } friends {*/}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20">
           <div>
-            {friends.length ? (
-              friends.map((item) => {
-                return (
-                  <div
-                    className="connectionsList"
-                    key={`connections-${item.id}`}
-                  >
-                    <h4>{item.username}</h4>
-
-                    <button
-                      className="border border-black m-4 p-4"
-                      onClick={() =>
-                        deleteFriendById(item.id).catch(() => {
-                          console.log('Delete request fails');
-                        })
-                      }
+            <h2 className="text-2xl text-center mb-10">your friends</h2>
+            <div>
+              {friends.length ? (
+                friends.map((item) => {
+                  return (
+                    <div
+                      className="flex flex-col items-center"
+                      key={`connections-${item.id}`}
                     >
-                      Delete
-                    </button>
-                  </div>
-                );
-              })
-            ) : (
-              <div>no friends yet </div>
-            )}
+                      <div className="mt-1 ">
+                        <Link href={`/readers/${item.user_id}`}>
+                          {item.username}
+                        </Link>
+                      </div>
+
+                      <button
+                        className="bg-black w-1/5 text-sm px-1 m-1 text-white rounded"
+                        onClick={() =>
+                          deleteFriendById(item.id).catch(() => {
+                            console.log('Delete request fails');
+                          })
+                        }
+                      >
+                        delete
+                      </button>
+                    </div>
+                  );
+                })
+              ) : (
+                <div className="text-center  m-4  p-4 ">no friends yet </div>
+              )}
+            </div>
           </div>
-        </div>
+          <div className="mb-20">
+            {/* }friendship requests {*/}
+            <h2 className="text-2xl text-center mb-10 ">friendship requests</h2>
+            <div className=" m-4  p-4 ">
+              <div>
+                {requests.length ? (
+                  requests.map((item) => {
+                    return (
+                      <div className="grid" key={`connections-${item.id}`}>
+                        <h4>{item.username}</h4>
 
-        {/* }friendship requests {*/}
-        <div className=" border border-black m-4 p-4 ">
-          <h2>friendship requests</h2>
-
-          <div>
-            {requests.length ? (
-              requests.map((item) => {
-                return (
-                  <div
-                    className="connectionsList"
-                    key={`connections-${item.id}`}
-                  >
-                    <h4>{item.username}</h4>
-
-                    <button
-                      className="border border-black rounded p-2 m-2"
-                      onClick={() =>
-                        rejectRequest(item.id).catch(() => {
-                          console.log('Put request failed');
-                        })
-                      }
-                    >
-                      reject
-                    </button>
-                    <button
-                      className="border border-black rounded p-2 m-2"
-                      onClick={
-                        () => acceptRequest(item.user_id) //.catch(() => {
-                        // console.log('Post request fails');
-                        // })
-                      }
-                    >
-                      accept
-                    </button>
-                  </div>
-                );
-              })
-            ) : (
-              <div>No requests </div>
-            )}
+                        <button
+                          className="bg-black w-1/5 text-sm px-1 text-white rounded"
+                          onClick={() =>
+                            rejectRequest(item.id).catch(() => {
+                              console.log('Put request failed');
+                            })
+                          }
+                        >
+                          reject
+                        </button>
+                        <button
+                          className="bg-black w-1/5 text-sm px-1 text-white rounded"
+                          onClick={
+                            () => acceptRequest(item.user_id) //.catch(() => {
+                            // console.log('Post request fails');
+                            // })
+                          }
+                        >
+                          accept
+                        </button>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="text-center">no requests </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </section>

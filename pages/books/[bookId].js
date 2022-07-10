@@ -105,7 +105,7 @@ export default function BookDetails(props) {
       </section>
       <section>
         <div className="text-center flex justify-center flex-col items-center">
-          <h2 className="p-2 text-2xl mt-20">do your know this book? </h2>
+          <h2 className="p-2 text-2xl mt-20">do you know this book? </h2>
           <h3 className="p-2 mb-10 text-lg">share your thoughts</h3>
           <div className="m-4 w-2/3 ">
             {props.user ? (
@@ -153,7 +153,6 @@ export default function BookDetails(props) {
               {[...reviewsList]
                 .reverse()
 
-                // .sort((a, b) => b.review_timestamp - a.review_timestamp)
 
                 .map((listItem) => {
                   return (
