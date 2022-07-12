@@ -136,7 +136,6 @@ export default function Readers(props) {
           </>
         )}
       </section>
-
     </>
   );
 }
@@ -148,7 +147,7 @@ export async function getServerSideProps(context) {
 
   console.log(user);
 
-  const isFriend = await getFriendsById(context.query.userId, user.id);
+  const isFriend = (await getFriendsById(context.query.userId, user.id)) || [];
 
   // const isFriend = await JSON.parse(JSON.stringify(responseIsFriend));
 

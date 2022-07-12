@@ -1,15 +1,32 @@
+import 'material-react-toastify/dist/ReactToastify.css';
 import { css } from '@emotion/react';
+import { toast, ToastContainer } from 'material-react-toastify';
 import Link from 'next/link';
-import { enqueueSnackbar, SnackbarProvider } from 'notistack';
 import { useEffect, useState } from 'react';
 import { getUserBySessionToken } from '../../util/database';
 
+toast.configure();
 export default function BookDetails(props) {
   const [review, setReview] = useState('');
   const [reviewsList, setReviewsList] = useState([]);
 
-  // Notification when adding book to bookstack
+  // Notification when book added to book-stack
 
+  const addedNotification = () => {
+    toast.dark('Added to your bookstack!', {
+      position: toast.POSITION.TOP_LEFT,
+      autoClose: 4000,
+    });
+  };
+
+  // Notification when book is already on boock-stack
+
+  const notAddedNotification = () => {
+    toast.dark('This book is already on your bookstack!', {
+      position: toast.POSITION.TOP_LEFT,
+      autoClose: 4000,
+    });
+  };
   // GET all reviews to one book
 
   useEffect(() => {
@@ -62,6 +79,12 @@ export default function BookDetails(props) {
     });
 
     const addBookResponseBody = await addBookResponse.json();
+
+    if (addBookResponse.status === 400) {
+      notAddedNotification();
+    } else {
+      addedNotification();
+    }
   }
   if (!props.book) {
     return <h1>Book not found</h1>;
@@ -79,16 +102,13 @@ export default function BookDetails(props) {
             : 'Unknowen'}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-20">
-          <div>Img</div>
+          <div>{/*} {props.book.volumeInfo.description} {*/}</div>
           <div className="flex justify-evenly">
             <div className="self-end">
               {' '}
-              <SnackbarProvider />
               <button
                 className="bg-black w-full p-2 text-white rounded"
                 onClick={() => {
-                  enqueueSnackbar('Book added');
-
                   addBookHandler().catch(() => {
                     console.log('Post request fails');
                   });
@@ -96,6 +116,7 @@ export default function BookDetails(props) {
               >
                 put on your bookstack
               </button>
+              <ToastContainer />
             </div>
             <img
               className="rounded w-1/3"

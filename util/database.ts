@@ -487,8 +487,11 @@ RETURNING
 *
 
 `;
+
   return newFriend;
 }
+
+
 
 // get friends with username
 
@@ -529,7 +532,7 @@ type Friend = {
 
 export async function getFriendsById(userId: string, friendId: string) {
   if (!userId || !friendId) return undefined;
-  const friendsById = await sql<[Friend | undefined]>`
+  const [friendsById] = await sql<[Friend | undefined]>`
 
     SELECT
     *

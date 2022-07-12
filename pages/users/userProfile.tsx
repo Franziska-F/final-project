@@ -43,7 +43,6 @@ export default function UserProfil(props: Props) {
       const response = await fetch(`../api/friends`);
       const newState = await response.json();
       setFriends(newState);
-
     }
 
     getFriends().catch(() => {
@@ -121,8 +120,7 @@ export default function UserProfil(props: Props) {
       },
     });
     const deletedConnection = await response.json();
-    console.log('friend', friends);
-    console.log('deletedConnection', deletedConnection);
+
 
     const newState = friends.filter((item) => item.id !== deletedConnection.id);
 
@@ -162,13 +160,16 @@ export default function UserProfil(props: Props) {
 
     const acceptRequestResponse = await response.json();
 
-    const newState = [...friends, acceptRequestResponse];
+    console.log('test', acceptRequestResponse);
 
-    setFriends(newState);
+   
+
+    setFriends([...friends]);
   }
 
   return (
     <div>
+      {JSON.stringify(friends)}
       <h1 className="p-2 text-2xl text-center mt-20">
         hello, {props.user.username}
       </h1>
@@ -183,7 +184,7 @@ export default function UserProfil(props: Props) {
         </div>
 
         <div>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-8 px-8 items-center">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-8 px-8 items-center max-h-96 overflow-auto">
             <h2 className="text-center text-2xl pt-10">your bookstack</h2>
             {readingList.map((item) => {
               return (
@@ -320,8 +321,8 @@ export default function UserProfil(props: Props) {
                         <Link href={`/readers/${item.user_id}`}>
                           {item.username}
                         </Link>
-                      </div> {/* } Problem with Link if there is no friend yet? {*/}
-
+                      </div>
+                      {/* } Problem with Link if there is no friend yet? {*/}
                       <button
                         className="bg-black w-1/5 text-sm px-1 m-1 text-white rounded"
                         onClick={() =>

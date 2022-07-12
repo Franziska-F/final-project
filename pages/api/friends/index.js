@@ -2,9 +2,12 @@ import {
   addToConnections,
   addToFriends,
   deleteAcceptedRequest,
+  friendWithNames,
   getConnectedUserByUserId,
   getFriendsWithUsername,
+  getFriendWithUsername,
   getReadersWithUsername,
+  getUserById,
   getUserBySessionToken,
 } from '../../../util/database';
 
@@ -20,18 +23,27 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
-    console.log(req.body.connected_user_id);
-    const addFriend = await addToFriends(user.id, req.body.connected_user_id);
 
-    const deleteUser = await deleteAcceptedRequest(
-      req.body.connected_user_id,
-  
+    const addFriendship = await addToFriends(
       user.id,
+      req.body.connected_user_id,
     );
 
-    console.log('API', addFriend);
+    console.log(addFriendship);
+    const deleteUser = await deleteAcceptedRequest(
+      // delete accepted requests
+      req.body.connected_user_id,
+      user.id,
+    );
+    console.log('id', addFriendship[0].id);
+    // get Username of friend
+    const newFriend = await getUserById(addFriendship[0].friend_id);
 
-    return res.status(200).json(addFriend);
+    console.log('API', addFriendship);
+
+    console.log('new Friend', newFriend);
+
+    return res.status(200).json(newFriend);
   } else {
     res.status(405).json({ errors: [{ message: 'Method not allowed' }] });
   }

@@ -15,18 +15,18 @@ export default async function handler(req, res) {
     );
     const book = await bookResponse.json();
 
-     if (await getlistedBookByIdAndUserId(user.id, req.body.book_id)) {
-       res.status(400).json({
-         errors: [{ message: 'This book is already on your readinglist' }],
-       });
-       return;
-     }
+    if (await getlistedBookByIdAndUserId(user.id, req.body.book_id)) {
+      res.status(400).json({
+        errors: [{ message: 'This book is already on your readinglist' }],
+      });
+      return;
+    }
 
     const addBook = await addToReadingList(
       user.id,
       req.body.book_id,
       book.volumeInfo.title,
-      book.volumeInfo.authors[0], // need to check if author is undefined!
+      book.volumeInfo.authors ? book.volumeInfo.authors[0] : 'undefined',
     );
 
     return res.status(200).json(addBook);
