@@ -1,13 +1,16 @@
 import { css } from '@emotion/react';
 import Link from 'next/link';
+import { enqueueSnackbar, SnackbarProvider } from 'notistack';
 import { useEffect, useState } from 'react';
 import { getUserBySessionToken } from '../../util/database';
-
-// GET all reviews to one book
 
 export default function BookDetails(props) {
   const [review, setReview] = useState('');
   const [reviewsList, setReviewsList] = useState([]);
+
+  // Notification when adding book to bookstack
+
+  // GET all reviews to one book
 
   useEffect(() => {
     async function getReviewsWithUsernames() {
@@ -80,13 +83,16 @@ export default function BookDetails(props) {
           <div className="flex justify-evenly">
             <div className="self-end">
               {' '}
+              <SnackbarProvider />
               <button
                 className="bg-black w-full p-2 text-white rounded"
-                onClick={() =>
+                onClick={() => {
+                  enqueueSnackbar('Book added');
+
                   addBookHandler().catch(() => {
                     console.log('Post request fails');
-                  })
-                }
+                  });
+                }}
               >
                 put on your bookstack
               </button>
@@ -152,7 +158,6 @@ export default function BookDetails(props) {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 px-8 ">
               {[...reviewsList]
                 .reverse()
-
 
                 .map((listItem) => {
                   return (

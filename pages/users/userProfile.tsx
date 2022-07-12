@@ -320,7 +320,7 @@ export default function UserProfil(props: Props) {
                         <Link href={`/readers/${item.user_id}`}>
                           {item.username}
                         </Link>
-                      </div>
+                      </div> {/* } Problem with Link if there is no friend yet? {*/}
 
                       <button
                         className="bg-black w-1/5 text-sm px-1 m-1 text-white rounded"

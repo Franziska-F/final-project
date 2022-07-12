@@ -515,17 +515,41 @@ export async function getFriendsWithUsername(userId: string) {
   (users.id = friends.user_id OR
   users.id = friends.friend_id) AND
   users.id != ${userId}
-
-
-
-
   `;
   return friendsWithNames;
 }
 
+// Get friends connected to an id
+
+type Friend = {
+  id: number;
+  user_id: number;
+  friend_id: number;
+};
+
+export async function getFriendsById(userId: string, friendId: string) {
+  if (!userId || !friendId) return undefined;
+  const friendsById = await sql<[Friend | undefined]>`
+
+    SELECT
+    *
+
+    FROM
+    friends
+
+    WHERE
+    (user_id = ${userId} AND
+  friend_id = ${friendId})
+  OR
+  (user_id = ${friendId} AND
+  friend_id = ${userId})`;
+
+  return friendsById;
+}
+
 // Delete accepted request
 
-export async function deleteAcceptedRequest(id, connected_id) {
+export async function deleteAcceptedRequest(id: number, connected_id: number) {
   if (!id) return undefined;
   const deletedConnection = await sql`
  DELETE FROM
@@ -538,4 +562,19 @@ export async function deleteAcceptedRequest(id, connected_id) {
   RETURNING
   *`;
   return deletedConnection;
+}
+
+export async function getContactsByUserId(userId: number) {
+  if (!userId) return undefined;
+  const [contacts] = await sql`
+  SELECT
+   email,
+  country,
+  city
+   FROM
+  userProfiles
+  WHERE
+  user_id = ${userId}`;
+
+  return contacts;
 }

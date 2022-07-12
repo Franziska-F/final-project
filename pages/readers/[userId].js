@@ -1,5 +1,11 @@
 import { useEffect, useState } from 'react';
-import { getUserById } from '../../util/database';
+import {
+  getContactsByUserId,
+  getFriendsById,
+  getFriendsWithUsername,
+  getUserById,
+  getUserBySessionToken,
+} from '../../util/database';
 
 export default function Readers(props) {
   const [readerReviews, setReaderReviews] = useState([]);
@@ -52,7 +58,7 @@ export default function Readers(props) {
         <h2 className="text-center text-2xl">
           {props.reader.username}'s reviews
         </h2>
-
+        {/* } Reviews {*/}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-8 px-20 mt-14">
           {readerReviews.map((listItem) => {
             return (
@@ -78,59 +84,91 @@ export default function Readers(props) {
           })}
         </div>
       </section>
+      {/* } Friends {*/}
       <section className="py-12">
-        <h3 className="text-center text-2xl mb-10 md:mb-16">
-          connect with {props.reader.username}
-        </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
-          <div className="place-self-center">
-            <button
-              className="bg-black w-full text-sm p-2 text-white rounded"
-              onClick={() =>
-                makeRequest().catch(() => {
-                  console.log('Post request fails');
-                })
-              }
-            >
-              {' '}
-              Send {props.reader.username} a friendship request
-            </button>
-          </div>
-          <div>
-            <p>
-              connect with other readers to see their friends, their email
-              address and location
-            </p>
-          </div>
-        </div>
+        {props.isFriend.length ? (
+          <>
+            <h3 className="text-center text-2xl mb-14">
+              {props.reader.username} is your friend
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 ">
+              <div>
+                <h3>contact</h3>
+                <h4>
+                  {props.contacts.city}, {props.contacts.country}
+                </h4>
+                <h4>{props.contacts.email}</h4>
+              </div>
+              <div className="place-self-center">
+                <h2> {props.reader.username}'friends</h2>
+                {props.friends.map((item) => {
+                  return <h3 key={item.id}>{item.username}</h3>;
+                })}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="text-center text-2xl mb-10 md:mb-16">
+              connect with {props.reader.username}
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
+              <div className="place-self-center">
+                <button
+                  className="bg-black w-full text-sm p-2 text-white rounded"
+                  onClick={() =>
+                    makeRequest().catch(() => {
+                      console.log('Post request fails');
+                    })
+                  }
+                >
+                  {' '}
+                  Send {props.reader.username} a friendship request
+                </button>
+              </div>
+              <div>
+                <p>
+                  connect with other readers to see their friends, their email
+                  address and location
+                </p>
+              </div>
+            </div>
+          </>
+        )}
       </section>
-      <section>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
-          <div>
-            <h3>contact</h3>
-            <h4>clio@example.com</h4>
-            <h4>location</h4>
-          </div>
-          <div>
-            <h3>{props.reader.username}' friends</h3>
-          </div>
-        </div>
-      </section>
+
     </>
   );
 }
 
 export async function getServerSideProps(context) {
   const reader = await getUserById(context.query.userId);
-  // const responseReadingList = await getlistedBooksByUserId(user.id);
 
-  // const readingList = await JSON.parse(JSON.stringify(responseReadingList));
+  const user = await getUserBySessionToken(context.req.cookies.sessionToken);
+
+  console.log(user);
+
+  const isFriend = await getFriendsById(context.query.userId, user.id);
+
+  // const isFriend = await JSON.parse(JSON.stringify(responseIsFriend));
+
+  // Error: Error serializing `.isFriend` returned from `getServerSideProps` in "/readers/[userId]".
+  // Reason: `undefined` cannot be serialized as JSON. Please use `null` or omit this value.
+  // Why no problem with undefined user?
+
+  console.log(isFriend);
+
+  const friends = await getFriendsWithUsername(context.query.userId);
+
+  const contacts = await getContactsByUserId(context.query.userId);
 
   if (reader) {
     return {
       props: {
         reader: reader,
-        // readingList: readingList,
+        isFriend: isFriend,
+        friends: friends,
+        contacts: contacts,
       },
     };
   }
