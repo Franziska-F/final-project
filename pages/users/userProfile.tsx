@@ -2,6 +2,7 @@ import { GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
+  getFriendsWithUsername,
   getlistedBooksByUserId,
   getUserBySessionToken,
   User,
@@ -121,7 +122,6 @@ export default function UserProfil(props: Props) {
     });
     const deletedConnection = await response.json();
 
-
     const newState = friends.filter((item) => item.id !== deletedConnection.id);
 
     setFriends(newState);
@@ -161,8 +161,6 @@ export default function UserProfil(props: Props) {
     const acceptRequestResponse = await response.json();
 
     console.log('test', acceptRequestResponse);
-
-   
 
     setFriends([...friends]);
   }
@@ -322,7 +320,7 @@ export default function UserProfil(props: Props) {
                           {item.username}
                         </Link>
                       </div>
-                      {/* } Problem with Link if there is no friend yet? {*/}
+
                       <button
                         className="bg-black w-1/5 text-sm px-1 m-1 text-white rounded"
                         onClick={() =>
@@ -344,16 +342,19 @@ export default function UserProfil(props: Props) {
           <div className="mb-20">
             {/* }friendship requests {*/}
             <h2 className="text-2xl text-center mb-10 ">friendship requests</h2>
-            <div className=" m-4  p-4 ">
+            <div>
               <div>
                 {requests.length ? (
                   requests.map((item) => {
                     return (
-                      <div className="grid" key={`connections-${item.id}`}>
+                      <div
+                        className="flex flex-col items-center"
+                        key={`connections-${item.id}`}
+                      >
                         <h4>{item.username}</h4>
 
                         <button
-                          className="bg-black w-1/5 text-sm px-1 text-white rounded"
+                          className="bg-black w-1/5 text-sm px-1 m-1 text-white rounded"
                           onClick={() =>
                             rejectRequest(item.id).catch(() => {
                               console.log('Put request failed');
@@ -376,7 +377,7 @@ export default function UserProfil(props: Props) {
                     );
                   })
                 ) : (
-                  <div className="text-center">no requests </div>
+                  <div className="text-center m-4  p-4 ">no requests </div>
                 )}
               </div>
             </div>
@@ -390,15 +391,20 @@ export default function UserProfil(props: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
+  // const usersFriends = await getFriendsWithUsername(user.id);
+
   const responseReadingList = await getlistedBooksByUserId(user.id);
 
   const readingList = await JSON.parse(JSON.stringify(responseReadingList));
+
+  // console.log(usersFriends);
 
   if (user) {
     return {
       props: {
         user: user,
         readingList: readingList,
+        // usersFriends: usersFriends,
       },
     };
   }

@@ -389,7 +389,7 @@ RETURNING
   return newConnection;
 }
 
-export async function getConnectedUserByUserId(userId) {
+export async function getConnectedUserByUserId(userId: number) {
   if (!userId) return undefined;
   const connectedUser = await sql<[User | undefined]>`
     SELECT
@@ -400,6 +400,22 @@ export async function getConnectedUserByUserId(userId) {
       connected_user_id = ${userId} AND current_status = 'pen'
   `;
   return connectedUser;
+}
+
+// get all requests a user made
+
+export async function getAllRequestsById(userId: number) {
+  if (!userId) return undefined;
+  const allRequests = await sql<[User | undefined]>`
+    SELECT
+      id, user_id, connected_user_id, current_status
+    FROM
+      connections
+    WHERE
+      connected_user_id = ${userId} AND (current_status = 'pen' OR
+      current_status = 'rej')
+  `;
+  return allRequests;
 }
 
 // get connected readers and their names
@@ -453,7 +469,7 @@ export async function deleteFriendById(id: number) {
 
 // UPDATE connection request from pending to reject
 
-export async function rejectConnection(id) {
+export async function rejectConnection(id: number) {
   const [rejected] = await sql`
   UPDATE
   connections
@@ -490,8 +506,6 @@ RETURNING
 
   return newFriend;
 }
-
-
 
 // get friends with username
 

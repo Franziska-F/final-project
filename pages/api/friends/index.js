@@ -35,15 +35,15 @@ export default async function handler(req, res) {
       req.body.connected_user_id,
       user.id,
     );
-    console.log('id', addFriendship[0].id);
+    // console.log('id', addFriendship[0].id);
     // get Username of friend
-    const newFriend = await getUserById(addFriendship[0].friend_id);
+    const addedFriend = await getUserById(addFriendship[0].friend_id);
 
-    console.log('API', addFriendship);
+    // console.log('API', addFriendship);
 
-    console.log('new Friend', newFriend);
+    // console.log('new Friend', newFriend);
 
-    return res.status(200).json(newFriend);
+    return res.status(200).json(addedFriend);
   } else {
     res.status(405).json({ errors: [{ message: 'Method not allowed' }] });
   }

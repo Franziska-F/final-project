@@ -163,15 +163,15 @@ export default function BookDetails(props) {
               </>
             ) : (
               <div>
-                <p>lease log in or register to write a review</p>
+                <p>please log in or register to write a review</p>
               </div>
             )}
           </div>
         </div>
       </section>
-      <section className="flex justify-evenly items-center">
+      <section className="flex justify-evenly items-center mb-20">
         <div>
-          <h2 className="p-2 my-20 text-2xl text-center">
+          <h2 className="p-2 my-14 text-2xl text-center">
             {' '}
             see what other readers wrote about this book{' '}
           </h2>
@@ -196,12 +196,12 @@ export default function BookDetails(props) {
             </div>
           ) : (
             <p>
-              There is <span>1</span> review, please log in or register to read
-              id
+              please log in or register to see what other readers think about
+              this book
             </p>
           )}
 
-          {!props.user ? (
+          {/* } {!props.user ? (
             <div>
               <div>
                 {' '}
@@ -215,7 +215,7 @@ export default function BookDetails(props) {
             </div>
           ) : (
             <span />
-          )}
+          )} {*/}
         </div>
       </section>
     </div>

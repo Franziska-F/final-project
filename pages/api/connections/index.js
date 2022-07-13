@@ -1,5 +1,6 @@
 import {
   addToConnections,
+  getAllRequestsById,
   getReadersWithUsername,
   getUserBySessionToken,
 } from '../../../util/database';
@@ -16,6 +17,16 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+
+
+    if (await getAllRequestsById(user.id)) {
+      res.status(400).json({
+        errors: [{ message: 'You already made a request' }],
+      });
+
+      return;
+    }
 
     const addConnection = await addToConnections(
       user.id,

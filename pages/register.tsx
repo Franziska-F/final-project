@@ -6,8 +6,7 @@ type Props = { displayUserProfile: () => Promise<void> };
 export default function Register(props: Props) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  // const [firstName, setFirstName] = useState('');
-  // const [lastName, setLastName] = useState('');
+
   const [email, setEmail] = useState('');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
@@ -59,66 +58,76 @@ export default function Register(props: Props) {
   }
 
   return (
-    <div>
+    <div className="mb-20">
       {' '}
-      <h2>Register</h2>
-      <div>
-        <label>
-          <input
-            placeholder="username"
-            value={username}
-            onChange={(event) => {
-              setUsername(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
+      <h2 className="text-center text-2xl my-10 md:my-14">register</h2>
+      <div className="flex items-center flex-col">
+        <label htmlFor="username">please choose a username</label>
+        <input
+          className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-1/3 m-4"
+          id="username"
+          placeholder="username"
+          value={username}
+          onChange={(event) => {
+            setUsername(event.currentTarget.value);
+          }}
+        />{' '}
       </div>
-      <div>
-        <label>
-          <input
-            placeholder="password"
-            value={password}
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
+      <div className="flex items-center flex-col">
+        <label htmlFor="password">please choose a password </label>{' '}
+        <input
+          className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-1/3 m-4"
+          id="password"
+          placeholder="password"
+          value={password}
+          onChange={(event) => {
+            setPassword(event.currentTarget.value);
+          }}
+        />
       </div>
-      <div>
-        <label>
-          <input
-            placeholder="Location"
-            value={city}
-            onChange={(event) => {
-              setCity(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
+      <div className="flex items-center flex-col">
+        <label htmlFor="location">location</label>
+        <input
+          className="border border-black rounded focus:border-blue-400 py-2 px-3 w-1/3 m-4"
+          id="location"
+          placeholder="location"
+          value={city}
+          onChange={(event) => {
+            setCity(event.currentTarget.value);
+          }}
+        />
       </div>
-      <div>
-        <label>
-          <input
-            placeholder="country"
-            value={country}
-            onChange={(event) => {
-              setCountry(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
+      <div className="flex items-center flex-col">
+        <label htmlFor="country">country</label>
+        <input
+          className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-1/3 m-4"
+          id="country"
+          placeholder="country"
+          value={country}
+          onChange={(event) => {
+            setCountry(event.currentTarget.value);
+          }}
+        />
       </div>
-      <div>
-        <label>
-          <input
-            placeholder="Email"
-            value={email}
-            onChange={(event) => {
-              setEmail(event.currentTarget.value);
-            }}
-          />
-        </label>{' '}
+      <div className="flex items-center flex-col">
+        <label htmlFor="mail">email</label>
+        <input
+          className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-1/3 m-4"
+          id="mail"
+          placeholder="email"
+          value={email}
+          onChange={(event) => {
+            setEmail(event.currentTarget.value);
+          }}
+        />
       </div>
-      <div>
-        <button onClick={() => registerHandler()}>Register</button>
+      <div className="flex items-center flex-col">
+        <button
+          className="bg-black w-1/4 text-sm p-2 mt-4 text-white rounded"
+          onClick={() => registerHandler()}
+        >
+          register
+        </button>
         {errors.length
           ? errors.map((error) => (
               <span key={`error-${error.message}`}>{error.message}</span>

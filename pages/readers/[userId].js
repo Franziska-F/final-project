@@ -1,3 +1,5 @@
+import 'material-react-toastify/dist/ReactToastify.css';
+import { toast, ToastContainer } from 'material-react-toastify';
 import { useEffect, useState } from 'react';
 import {
   getContactsByUserId,
@@ -10,13 +12,30 @@ import {
 export default function Readers(props) {
   const [readerReviews, setReaderReviews] = useState([]);
 
+  // Notification when request is made
+
+  const requestMade = () => {
+    toast.dark('Request made!', {
+      position: toast.POSITION.TOP_LEFT,
+      autoClose: 4000,
+    });
+  };
+
+  // Notification when request already made
+
+  const alreadyRequested = () => {
+    toast.dark('You already made a request!', {
+      position: toast.POSITION.TOP_LEFT,
+      autoClose: 4000,
+    });
+  };
+
   useEffect(() => {
     // GET reviews
     async function getReviewsByUserId() {
       const response = await fetch(`/api/reviews?userid=${props.reader.id}`);
       const reviews = await response.json();
       setReaderReviews(reviews);
-      console.log(reviews);
     }
     getReviewsByUserId().catch(() => {
       console.log('Reviews request fails');
@@ -33,6 +52,13 @@ export default function Readers(props) {
         connected_user_id: props.reader.id,
       }),
     });
+    const request = await response.json();
+
+    if (response.status === 400) {
+      alreadyRequested();
+    } else {
+      requestMade();
+    }
   }
 
   return (
@@ -92,17 +118,17 @@ export default function Readers(props) {
               {props.reader.username} is your friend
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 ">
-              <div>
-                <h3>contact</h3>
+              <div className="text-center">
+                <h2 className="my-1">contact</h2>
                 <h4>
                   {props.contacts.city}, {props.contacts.country}
                 </h4>
                 <h4>{props.contacts.email}</h4>
               </div>
-              <div className="place-self-center">
-                <h2> {props.reader.username}'friends</h2>
+              <div className="text-center">
+                <h2 className="my-1"> {props.reader.username}'friends</h2>
                 {props.friends.map((item) => {
-                  return <h3 key={item.id}>{item.username}</h3>;
+                  return <h4 key={item.id}>{item.username}</h4>;
                 })}
               </div>
             </div>
@@ -125,6 +151,7 @@ export default function Readers(props) {
                   {' '}
                   Send {props.reader.username} a friendship request
                 </button>
+                <ToastContainer />
               </div>
               <div>
                 <p>
@@ -145,17 +172,7 @@ export async function getServerSideProps(context) {
 
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
-  console.log(user);
-
   const isFriend = (await getFriendsById(context.query.userId, user.id)) || [];
-
-  // const isFriend = await JSON.parse(JSON.stringify(responseIsFriend));
-
-  // Error: Error serializing `.isFriend` returned from `getServerSideProps` in "/readers/[userId]".
-  // Reason: `undefined` cannot be serialized as JSON. Please use `null` or omit this value.
-  // Why no problem with undefined user?
-
-  console.log(isFriend);
 
   const friends = await getFriendsWithUsername(context.query.userId);
 
