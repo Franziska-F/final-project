@@ -1,6 +1,5 @@
 import { config } from 'dotenv';
 import postgres from 'postgres';
-import { checkServerIdentity } from 'tls';
 
 config();
 // Type needed for the connection function below
@@ -33,7 +32,7 @@ export type User = {
   id: number;
   username: string;
 };
-type UserWithPasswordHash = User & { passwordHash: string };
+type UserWithPasswordHash = User & { password_hash: string };
 
 export async function createUser(username: 'string', passwordHash: 'string') {
   const [user] = await sql<[User]>`INSERT INTO
@@ -54,7 +53,7 @@ type Session = {
 
 export async function createSession(
   user_id: User['id'],
-  session_token: 'string',
+  session_token: string,
   // timestamp is created by default
 ) {
   const [session] = await sql<[Session]>`INSERT INTO
@@ -97,15 +96,15 @@ RETURNING *`;
 type UserProfile = {
   id: number;
   session_token: string;
-  email: 'string';
-  country: 'string';
-  city: 'string';
+  email: string;
+  country: string;
+  city: string;
 };
 export async function createUserProfile(
   user_id: User['id'],
-  email: 'string',
-  country: 'string',
-  city: 'string',
+  email: string,
+  country: string,
+  city: string,
   // timestamp is created by default
 ) {
   const [userProfil] = await sql<[UserProfile]>`INSERT INTO
@@ -152,7 +151,7 @@ export async function getUserById(userId: number) {
 // return full user from users (id, username, passwordHash)
 export async function getUserWithPasswordHash(username: string) {
   if (!username) return undefined;
-  const [user] = await sql<[User | undefined]>`
+  const [user] = await sql<[UserWithPasswordHash | undefined]>`
     SELECT
      *
     FROM
@@ -179,19 +178,20 @@ export async function getUserBySessionToken(sessionToken: string) {
   return user;
 }
 
-type UserReview = {
+export type UserReview = {
   id: number;
-  book_id: 'string';
-  review: 'string';
+  book_id: string;
+  review: string;
+  book_title: string;
 };
 
 // reviews
 
 export async function createReview(
   user_id: User['id'],
-  book_id: 'string',
-  book_title: 'string',
-  review: 'string',
+  book_id: string,
+  book_title: string,
+  review: string,
 
   // timestamp is created by default
 ) {
@@ -299,15 +299,23 @@ RETURNING
 
 // Adding a book to the readinglist
 
+export type ReadingList = {
+  id: number;
+  user_id: number;
+  book_id: string;
+  book_title: string;
+  book_author: string;
+};
+
 export async function addToReadingList(
   user_id: User['id'],
-  book_id: 'string',
-  book_title: 'string',
-  book_author: 'string',
+  book_id: string,
+  book_title: string,
+  book_author: string,
 
   // timestamp is created by default
 ) {
-  const readingList = await sql<[UserReview]>`INSERT INTO
+  const readingList = await sql<[ReadingList]>`INSERT INTO
 readingList (user_id, book_id, book_title, book_author)
 VALUES
 (${user_id}, ${book_id}, ${book_title}, ${book_author})
@@ -415,10 +423,19 @@ export async function getAllRequestsById(userId: number) {
       connected_user_id = ${userId} AND (current_status = 'pen' OR
       current_status = 'rej')
   `;
+  await deleteExpiredRequests();
+
   return allRequests;
 }
 
-// get connected readers and their names
+// get friends and their names
+
+export type Request = {
+  connected_id: number;
+  username: string;
+  user_id: number;
+  id: number;
+};
 
 export async function getReadersWithUsername(userId: string) {
   if (!userId) return undefined;
@@ -467,7 +484,7 @@ export async function deleteFriendById(id: number) {
   return deletedConnection;
 }
 
-// UPDATE connection request from pending to reject
+// UPDATE friendship request from pending to reject
 
 export async function rejectConnection(id: number) {
   const [rejected] = await sql`
@@ -509,6 +526,13 @@ RETURNING
 
 // get friends with username
 
+export type Friend = {
+  friend_id: number;
+  user_id: number;
+  username: string;
+  id: number;
+};
+
 export async function getFriendsWithUsername(userId: string) {
   if (!userId) return undefined;
   const friendsWithNames = await sql`
@@ -538,15 +562,9 @@ export async function getFriendsWithUsername(userId: string) {
 
 // Get friends connected to an id
 
-type Friend = {
-  id: number;
-  user_id: number;
-  friend_id: number;
-};
-
 export async function getFriendsById(userId: string, friendId: string) {
   if (!userId || !friendId) return undefined;
-  const [friendsById] = await sql<[Friend | undefined]>`
+  const friendsById = await sql<[Friend | undefined]>`
 
     SELECT
     *
@@ -579,6 +597,21 @@ export async function deleteAcceptedRequest(id: number, connected_id: number) {
   RETURNING
   *`;
   return deletedConnection;
+}
+
+// Delete expired requests (rejected or not answered requests will expire after 14 days)
+
+export async function deleteExpiredRequests() {
+  const [request] = await sql`
+  DELETE FROM
+connections
+WHERE
+
+connections.expiry_timestamp < now()
+
+RETURNING *`;
+
+  return request;
 }
 
 export async function getContactsByUserId(userId: number) {

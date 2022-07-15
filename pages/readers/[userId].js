@@ -24,7 +24,7 @@ export default function Readers(props) {
   // Notification when request already made
 
   const alreadyRequested = () => {
-    toast.dark('You already made a request!', {
+    toast.dark('You already have made a request!', {
       position: toast.POSITION.TOP_LEFT,
       autoClose: 4000,
     });
@@ -43,7 +43,7 @@ export default function Readers(props) {
   }, [props.reader.id]);
 
   async function makeRequest() {
-    const response = await fetch(`../api/connections`, {
+    const response = await fetch(`../api/requests`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -172,13 +172,15 @@ export async function getServerSideProps(context) {
 
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
-  const isFriend = (await getFriendsById(context.query.userId, user.id)) || [];
+  const isFriend = (await getFriendsById(context.query.userId, user.id));
+
+  console.log(isFriend)
 
   const friends = await getFriendsWithUsername(context.query.userId);
 
   const contacts = await getContactsByUserId(context.query.userId);
 
-  if (reader) {
+  if (user) { // if user?!
     return {
       props: {
         reader: reader,

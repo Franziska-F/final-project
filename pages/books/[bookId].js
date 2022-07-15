@@ -1,5 +1,4 @@
 import 'material-react-toastify/dist/ReactToastify.css';
-import { css } from '@emotion/react';
 import { toast, ToastContainer } from 'material-react-toastify';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -102,7 +101,7 @@ export default function BookDetails(props) {
             : 'Unknowen'}
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-20">
-          <div>{/*} {props.book.volumeInfo.description} {*/}</div>
+          <div>{/* } {props.book.volumeInfo.description} {*/}</div>
           <div className="flex justify-evenly">
             <div className="self-end">
               {' '}
@@ -153,7 +152,9 @@ export default function BookDetails(props) {
                   <button
                     className=" bg-black w-1/2 p-2 text-white rounded mt-10"
                     onClick={() => {
-                      createReviewHandler();
+                      createReviewHandler().catch(() => {
+                        console.log('Put request failed');
+                      });
                       setReview('');
                     }}
                   >
@@ -232,6 +233,8 @@ export async function getServerSideProps(context) {
   );
 
   const book = await bookResponse.json();
+
+ 
 
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 

@@ -2,23 +2,28 @@ import { GetServerSidePropsContext } from 'next';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
-  getFriendsWithUsername,
+  Friend,
   getlistedBooksByUserId,
   getUserBySessionToken,
+  ReadingList,
+  Request,
   User,
+  UserReview,
 } from '../../util/database';
 
 type Props = {
   user?: User;
+  readingList?: ReadingList;
 };
+
 export default function UserProfil(props: Props) {
-  const [userReviews, setUserReviews] = useState([]);
-  const [aktiveId, setAktiveId] = useState(undefined);
+  const [userReviews, setUserReviews] = useState<UserReview[]>([]);
+  const [aktiveId, setAktiveId] = useState<User['id'] | undefined>(undefined);
   const [editReview, setEditReview] = useState('');
   const [readingList, setReadingList] = useState(props.readingList);
 
-  const [requests, setRequests] = useState([]);
-  const [friends, setFriends] = useState([]);
+  const [requests, setRequests] = useState<Request[]>([]);
+  const [friends, setFriends] = useState<Friend[]>([]);
 
   useEffect(() => {
     async function getReviewsByUserId() {
@@ -29,9 +34,9 @@ export default function UserProfil(props: Props) {
     getReviewsByUserId().catch(() => {
       console.log('Reviews request fails');
     });
-    // GET connected readers
+    // GET requests
     async function getConnectedRedadersById() {
-      const response = await fetch(`../api/connections`);
+      const response = await fetch(`../api/requests`);
       const readers = await response.json();
       setRequests(readers);
     }
@@ -60,7 +65,7 @@ export default function UserProfil(props: Props) {
       },
     });
     const deletedReview = await response.json();
-
+    console.log('userReviews', userReviews);
     // copy state
     // update copy of the state
     const newState = userReviews.filter((item) => item.id !== deletedReview.id);
@@ -111,7 +116,7 @@ export default function UserProfil(props: Props) {
     setReadingList(newState);
   }
 
-  // DELETE connected reader
+  // DELETE friend
 
   async function deleteFriendById(id: number) {
     const response = await fetch(`../api/friends/${id}`, {
@@ -128,7 +133,7 @@ export default function UserProfil(props: Props) {
   }
 
   async function rejectRequest(id: number) {
-    const response = await fetch(`../api/connections/${id}`, {
+    const response = await fetch(`../api/requests/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -208,7 +213,7 @@ export default function UserProfil(props: Props) {
           </div>
         </div>
       </section>
-      {/*} reviews {*/}
+      {/* } reviews {*/ }
       <section className="my-20">
         <h2 className="text-center text-2xl">your reviews</h2>
 
@@ -341,7 +346,8 @@ export default function UserProfil(props: Props) {
           </div>
           <div className="mb-20">
             {/* }friendship requests {*/}
-            <h2 className="text-2xl text-center mb-10 ">friendship requests</h2>
+            <h2 className="text-2xl text-center mb-8 ">friendship requests</h2>
+            <h3 className="text-center mb-1">your location and email address will be visible to accepted friends</h3>
             <div>
               <div>
                 {requests.length ? (
@@ -366,7 +372,7 @@ export default function UserProfil(props: Props) {
                         <button
                           className="bg-black w-1/5 text-sm px-1 text-white rounded"
                           onClick={
-                            () => acceptRequest(item.user_id) //.catch(() => {
+                            () => acceptRequest(item.user_id) // .catch(() => {
                             // console.log('Post request fails');
                             // })
                           }
@@ -390,6 +396,8 @@ export default function UserProfil(props: Props) {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
+
+
 
   // const usersFriends = await getFriendsWithUsername(user.id);
 
