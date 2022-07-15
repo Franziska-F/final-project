@@ -172,15 +172,16 @@ export async function getServerSideProps(context) {
 
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
-  const isFriend = (await getFriendsById(context.query.userId, user.id));
+  const isFriend = await getFriendsById(context.query.userId, user.id);
 
-  console.log(isFriend)
+  console.log(isFriend);
 
   const friends = await getFriendsWithUsername(context.query.userId);
 
   const contacts = await getContactsByUserId(context.query.userId);
 
-  if (user) { // if user?!
+  if (user) {
+    // if user?!
     return {
       props: {
         reader: reader,

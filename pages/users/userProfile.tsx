@@ -12,7 +12,7 @@ import {
 } from '../../util/database';
 
 type Props = {
-  user?: User;
+  user: User;
   readingList?: ReadingList;
 };
 
@@ -38,6 +38,7 @@ export default function UserProfil(props: Props) {
     async function getConnectedRedadersById() {
       const response = await fetch(`../api/requests`);
       const readers = await response.json();
+
       setRequests(readers);
     }
     getConnectedRedadersById().catch(() => {
@@ -132,6 +133,8 @@ export default function UserProfil(props: Props) {
     setFriends(newState);
   }
 
+  // Reject Request
+
   async function rejectRequest(id: number) {
     const response = await fetch(`../api/requests/${id}`, {
       method: 'PUT',
@@ -141,8 +144,7 @@ export default function UserProfil(props: Props) {
     });
     const rejectionResponse = await response.json();
 
-    console.log('request', requests);
-    console.log('response', rejectionResponse);
+   
     const newState = requests.filter(
       (item) => item.user_id !== rejectionResponse.user_id,
     );
@@ -172,7 +174,6 @@ export default function UserProfil(props: Props) {
 
   return (
     <div>
-      {JSON.stringify(friends)}
       <h1 className="p-2 text-2xl text-center mt-20">
         hello, {props.user.username}
       </h1>
@@ -213,7 +214,7 @@ export default function UserProfil(props: Props) {
           </div>
         </div>
       </section>
-      {/* } reviews {*/ }
+      {/* } reviews {*/}
       <section className="my-20">
         <h2 className="text-center text-2xl">your reviews</h2>
 
@@ -347,9 +348,13 @@ export default function UserProfil(props: Props) {
           <div className="mb-20">
             {/* }friendship requests {*/}
             <h2 className="text-2xl text-center mb-8 ">friendship requests</h2>
-            <h3 className="text-center mb-1">your location and email address will be visible to accepted friends</h3>
+            <h3 className="text-center mb-1">
+              your location and email address will be visible to accepted
+              friends
+            </h3>
             <div>
               <div>
+
                 {requests.length ? (
                   requests.map((item) => {
                     return (
@@ -397,17 +402,11 @@ export default function UserProfil(props: Props) {
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
-
-
-  // const usersFriends = await getFriendsWithUsername(user.id);
-
-  const responseReadingList = await getlistedBooksByUserId(user.id);
-
-  const readingList = await JSON.parse(JSON.stringify(responseReadingList));
-
-  // console.log(usersFriends);
-
   if (user) {
+    const responseReadingList = await getlistedBooksByUserId(user.id);
+
+    const readingList = await JSON.parse(JSON.stringify(responseReadingList));
+
     return {
       props: {
         user: user,

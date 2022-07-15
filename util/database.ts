@@ -412,18 +412,21 @@ export async function getConnectedUserByUserId(userId: number) {
 
 // get all requests a user made
 
-export async function getAllRequestsById(userId: number) {
+export async function getAllRequestsById(userId: number, connectedUserId: number) {
   if (!userId) return undefined;
-  const allRequests = await sql<[User | undefined]>`
+  const [allRequests] = await sql<[User | undefined]>`
     SELECT
       id, user_id, connected_user_id, current_status
     FROM
       connections
     WHERE
-      connected_user_id = ${userId} AND (current_status = 'pen' OR
+      (user_id = ${userId} AND
+      connected_user_id = ${connectedUserId}) AND
+      (current_status = 'pen' OR
       current_status = 'rej')
   `;
   await deleteExpiredRequests();
+
 
   return allRequests;
 }

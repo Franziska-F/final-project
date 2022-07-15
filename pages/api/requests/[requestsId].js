@@ -3,15 +3,19 @@
 import { deleteConnectionById, rejectConnection } from '../../../util/database';
 
 export default async function handler(req, res) {
-  const connectionId = req.query.connectionsId;
+  const requestId = req.query.requestsId;
+
+
   if (req.method === 'DELETE') {
-    const removeConnection = await deleteConnectionById(connectionId);
+    const removeConnection = await deleteConnectionById(requestId);
 
     return res.status(200).json(removeConnection);
   }
 
   if (req.method === 'PUT') {
-    const rejectedConnection = await rejectConnection(connectionId);
+    const rejectedConnection = await rejectConnection(requestId);
+
+   
 
     return res.status(200).json(rejectedConnection);
   } else {
