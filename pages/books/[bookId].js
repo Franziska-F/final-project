@@ -100,11 +100,24 @@ export default function BookDetails(props) {
             ? props.book.volumeInfo.authors[0]
             : 'Unknowen'}
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-20">
-          <div>{/* } {props.book.volumeInfo.description} {*/}</div>
-          <div className="flex justify-evenly">
-            <div className="self-end">
-              {' '}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-2 items-center">
+          <div>
+            <img
+              src="/img/choosing_books.jpg"
+              alt="drawing of a woman choosing books from a bookshelf"
+            />{' '}
+          </div>
+          <div className="flex flex-col justifiy-center items-center">
+            <img
+              className="rounded max-w-fit h-1/3 max-h-full m-8"
+              src={
+                props.book.volumeInfo.imageLinks !== undefined
+                  ? props.book.volumeInfo.imageLinks.thumbnail
+                  : ''
+              }
+              alt="bookcover"
+            />{' '}
+            <div>
               <button
                 className="bg-black w-full p-2 text-white rounded"
                 onClick={() => {
@@ -117,15 +130,6 @@ export default function BookDetails(props) {
               </button>
               <ToastContainer />
             </div>
-            <img
-              className="rounded w-1/3"
-              src={
-                props.book.volumeInfo.imageLinks !== undefined
-                  ? props.book.volumeInfo.imageLinks.thumbnail
-                  : ''
-              }
-              alt="bookcover"
-            />{' '}
           </div>
         </div>
       </section>
@@ -233,8 +237,6 @@ export async function getServerSideProps(context) {
   );
 
   const book = await bookResponse.json();
-
- 
 
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 

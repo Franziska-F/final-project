@@ -24,7 +24,7 @@ export default function Readers(props) {
   // Notification when request already made
 
   const alreadyRequested = () => {
-    toast.dark('You already have made a request!', {
+    toast.dark('You have already made a request!', {
       position: toast.POSITION.TOP_LEFT,
       autoClose: 4000,
     });

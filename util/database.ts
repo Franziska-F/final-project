@@ -410,11 +410,11 @@ export async function getConnectedUserByUserId(userId: number) {
   return connectedUser;
 }
 
-// get all requests a user made
+// check if user made already request
 
-export async function getAllRequestsById(userId: number, connectedUserId: number) {
+export async function RequestByIds(userId: number, connectedUserId: number) {
   if (!userId) return undefined;
-  const [allRequests] = await sql<[User | undefined]>`
+  const [isRequest] = await sql<[User | undefined]>`
     SELECT
       id, user_id, connected_user_id, current_status
     FROM
@@ -427,8 +427,7 @@ export async function getAllRequestsById(userId: number, connectedUserId: number
   `;
   await deleteExpiredRequests();
 
-
-  return allRequests;
+  return isRequest;
 }
 
 // get friends and their names
