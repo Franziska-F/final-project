@@ -34,7 +34,7 @@ export type User = {
 };
 type UserWithPasswordHash = User & { password_hash: string };
 
-export async function createUser(username: 'string', passwordHash: 'string') {
+export async function createUser(username: string, passwordHash: string) {
   const [user] = await sql<[User]>`INSERT INTO
 users (username, password_hash)
 VALUES
@@ -67,7 +67,7 @@ session_token
   return session;
 }
 
-export async function deleteSession(token: 'string') {
+export async function deleteSession(token: string) {
   const [session] = await sql<[Session]>`
   DELETE FROM
 sessions
@@ -228,7 +228,7 @@ export async function getReviewsByBookId(bookId: string) {
   return reviews;
 }
 
-export async function getReviewsByUserId(userId: string) {
+export async function getReviewsByUserId(userId: number) {
   if (!userId) return undefined;
   const reviewsOfUser = await sql`
     SELECT
@@ -439,7 +439,7 @@ export type Request = {
   id: number;
 };
 
-export async function getReadersWithUsername(userId: string) {
+export async function getReadersWithUsername(userId: number) {
   if (!userId) return undefined;
   const readersWithNames = await sql`
     SELECT
@@ -535,7 +535,7 @@ export type Friend = {
   id: number;
 };
 
-export async function getFriendsWithUsername(userId: string) {
+export async function getFriendsWithUsername(userId: number) {
   if (!userId) return undefined;
   const friendsWithNames = await sql`
 
@@ -564,7 +564,7 @@ export async function getFriendsWithUsername(userId: string) {
 
 // Get friends connected to an id
 
-export async function getFriendsById(userId: string, friendId: string) {
+export async function getFriendsById(userId: number, friendId: number) {
   if (!userId || !friendId) return undefined;
   const friendsById = await sql<[Friend | undefined]>`
 

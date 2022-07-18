@@ -1,4 +1,5 @@
 import { GetServerSidePropsContext } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
@@ -13,7 +14,7 @@ import {
 
 type Props = {
   user: User;
-  readingList?: ReadingList;
+  readingList?: ReadingList[];
 };
 
 export default function UserProfil(props: Props) {
@@ -75,7 +76,7 @@ export default function UserProfil(props: Props) {
   }
 
   // Uptdate reviews
-  async function updateReview(id: number, editReview: string) {
+  async function updateReview(id: number) {
     const response = await fetch(`../api/reviews/${id}`, {
       method: 'PUT',
       headers: {
@@ -111,10 +112,13 @@ export default function UserProfil(props: Props) {
       },
     });
     const deletedBook = await response.json();
+    if (readingList !== undefined) {
+      const newState = readingList.filter((item) => item.id !== deletedBook.id);
 
-    const newState = readingList.filter((item) => item.id !== deletedBook.id);
-
-    setReadingList(newState);
+      setReadingList(newState);
+    } else {
+      setReadingList([]);
+    }
   }
 
   // DELETE friend
@@ -144,7 +148,6 @@ export default function UserProfil(props: Props) {
     });
     const rejectionResponse = await response.json();
 
-   
     const newState = requests.filter(
       (item) => item.user_id !== rejectionResponse.user_id,
     );
@@ -174,6 +177,10 @@ export default function UserProfil(props: Props) {
 
   return (
     <div>
+      <Head>
+        <title> the bookclub || your profile </title>
+        <meta name="description" content="a social network for book lovers" />
+      </Head>
       <h1 className="p-2 text-2xl text-center mt-20">
         hello, {props.user.username}
       </h1>
@@ -190,27 +197,29 @@ export default function UserProfil(props: Props) {
         <div>
           <div className="grid grid-cols-1 md:grid-cols-1 gap-x-4 gap-y-8 px-8 items-center max-h-96 overflow-auto">
             <h2 className="text-center text-2xl pt-10">your bookstack</h2>
-            {readingList.map((item) => {
-              return (
-                <div
-                  className="grid justify-items-center"
-                  key={`readingList-${item.id}`}
-                >
-                  <h4 className="font-semibold">{item.book_title}</h4>
-                  <h4>{item.book_author}</h4>
-                  <button
-                    className="bg-black w-1/5 text-sm px-1 text-white rounded"
-                    onClick={() =>
-                      deleteBookById(item.id).catch(() => {
-                        console.log('Delete request fails');
-                      })
-                    }
-                  >
-                    delete
-                  </button>
-                </div>
-              );
-            })}
+            {!readingList
+              ? null
+              : readingList.map((item) => {
+                  return (
+                    <div
+                      className="grid justify-items-center"
+                      key={`readingList-${item.id}`}
+                    >
+                      <h4 className="font-semibold">{item.book_title}</h4>
+                      <h4>{item.book_author}</h4>
+                      <button
+                        className="bg-black w-1/5 text-sm px-1 text-white rounded"
+                        onClick={() =>
+                          deleteBookById(item.id).catch(() => {
+                            console.log('Delete request fails');
+                          })
+                        }
+                      >
+                        delete
+                      </button>
+                    </div>
+                  );
+                })}
           </div>
         </div>
       </section>
@@ -242,7 +251,7 @@ export default function UserProfil(props: Props) {
                       onClick={() => {
                         setAktiveId(undefined);
                         setEditReview(listItem.review);
-                        updateReview(listItem.id, editReview).catch(() => {
+                        updateReview(listItem.id).catch(() => {
                           console.log('Put request fails');
                         });
                       }}
@@ -354,7 +363,6 @@ export default function UserProfil(props: Props) {
             </h3>
             <div>
               <div>
-
                 {requests.length ? (
                   requests.map((item) => {
                     return (

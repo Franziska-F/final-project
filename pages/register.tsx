@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { RegisterResponseBody } from './api/register';
@@ -59,7 +60,10 @@ export default function Register(props: Props) {
 
   return (
     <div className="mb-20">
-      {' '}
+      <Head>
+        <title> the bookclub || register </title>
+        <meta name="description" content="a social network for book lovers" />
+      </Head>{' '}
       <h2 className="text-center text-2xl my-10 md:my-14">register</h2>
       <div className="flex items-center flex-col">
         <label htmlFor="username">please choose a username</label>

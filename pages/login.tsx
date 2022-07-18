@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { LoginResponseBody } from './api/login';
@@ -49,7 +50,10 @@ export default function Login(props: Props) {
 
   return (
     <div>
-      {' '}
+      <Head>
+        <title> the bookclub || login </title>
+        <meta name="description" content="a social network for book lovers" />
+      </Head>{' '}
       <h2 className="text-center text-2xl my-10 md:my-14 ">login</h2>
       <div>
         <div className="flex items-center flex-col">
@@ -81,7 +85,7 @@ export default function Login(props: Props) {
             className="bg-black w-1/4 text-sm p-2 mt-4 text-white rounded"
             onClick={() => loginHandler()}
           >
-            Login
+            login
           </button>
 
           {errors.length

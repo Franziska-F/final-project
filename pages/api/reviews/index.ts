@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import {
   createReview,
   getReviewsByUserId,
-  getReviewsWithUsername,
   getUserBySessionToken,
 } from '../../../util/database';
 
@@ -12,29 +11,30 @@ export type ReviewResponseBody = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<ReviewResponseBody>,
+  res: NextApiResponse,
 ) {
   // get all reviews for one book
 
   if (req.method === 'GET') {
-    const bookId = req.query.bookid;
-    const userId = req.query.userid;
+    // const bookId = req.query.bookid;
+    const id = req.query.userid as string;
+
+    const userId = Number(id);
+
     // (req.method === 'GET')
-    if (
-      // (Object.keys(req.query).length !== 0) {
-      bookId
-    ) {
-      // const allReviewsToBook = await getReviewsByBookId(bookId);
 
-      // return res.status(200).json(allReviewsToBook);
+    // if (bookId) {
+    // const allReviewsToBook = await getReviewsByBookId(bookId);
 
-     
-      const allReviewsWithUsername = await getReviewsWithUsername(bookId);
+    // return res.status(200).json(allReviewsToBook);
 
-      return res.status(200).json(allReviewsWithUsername);
-    }
+    //  const allReviewsWithUsername = await getReviewsWithUsername(bookId);
+
+    //  return res.status(200).json(allReviewsWithUsername);
+    // }
 
     // GET-request to display all reviews // of a user at first render in userProfile
+
     if (userId) {
       // if (req.method === 'GET') {
       // const user = await getUserBySessionToken(req.cookies.sessionToken);
@@ -59,6 +59,12 @@ export default async function handler(
 
     const user = await getUserBySessionToken(req.cookies.sessionToken);
 
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
+
     const bookResponse = await fetch(
       `https://books.googleapis.com/books/v1/volumes/${req.body.book_id}`,
     );
@@ -66,7 +72,7 @@ export default async function handler(
 
     const newReview = await createReview(
       user.id,
-      req.body.book_id, // how to get the bookId?
+      req.body.book_id,
       book.volumeInfo.title,
       req.body.review,
     );

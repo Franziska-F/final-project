@@ -1,4 +1,4 @@
-import Image from 'next/link';
+import Head from 'next/head';
 import { useState } from 'react';
 
 export default function Home() {
@@ -20,6 +20,10 @@ export default function Home() {
 
   return (
     <div>
+      <Head>
+        <title> the bookclub || wellcome </title>
+        <meta name="description" content="a social network for book lovers" />
+      </Head>
       <h1 className="text-3xl font-bold font-main my-10 text-center">
         read, write, connect
       </h1>
@@ -94,7 +98,7 @@ export default function Home() {
           <div>
             <p className="text-3xl font-bold  my-10 text-center ">write</p>
             <p className="text-center">
-              loved a book? imprssed? Did't like it? write your thoughts down
+              loved a book? impressed? didn't like it? write your thoughts down
               and share them with other readers.{' '}
             </p>
           </div>
@@ -102,7 +106,8 @@ export default function Home() {
           <div className="text-center">
             <p className="text-3xl font-bold font-main my-10 ">connect</p>
             <p>
-              find others who love the same book as you and connect with them{' '}
+              find other readers who love the same book as you and connect with
+              them{' '}
             </p>
           </div>
           <div>

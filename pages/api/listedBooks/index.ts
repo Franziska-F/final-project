@@ -1,14 +1,24 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import {
   addToReadingList,
   getlistedBookByIdAndUserId,
   getUserBySessionToken,
 } from '../../../util/database';
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+) {
   // Add a book to readinglist
 
   if (req.method === 'POST') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
 
     const bookResponse = await fetch(
       `https://books.googleapis.com/books/v1/volumes/${req.body.book_id}`,

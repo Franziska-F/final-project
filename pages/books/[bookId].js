@@ -1,13 +1,17 @@
 import 'material-react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'material-react-toastify';
+import Head from 'next/head';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { getUserBySessionToken } from '../../util/database';
+import { useState } from 'react';
+import {
+  getReviewsWithUsername,
+  getUserBySessionToken,
+} from '../../util/database';
 
 toast.configure();
 export default function BookDetails(props) {
   const [review, setReview] = useState('');
-  const [reviewsList, setReviewsList] = useState([]);
+  const [reviewsList, setReviewsList] = useState(props.allReviews);
 
   // Notification when book added to book-stack
 
@@ -28,18 +32,7 @@ export default function BookDetails(props) {
   };
   // GET all reviews to one book
 
-  useEffect(() => {
-    async function getReviewsWithUsernames() {
-      const response = await fetch(`/api/reviews?bookid=${props.book.id}`);
 
-      const reviews = await response.json();
-
-      setReviewsList(reviews);
-    }
-    getReviewsWithUsernames().catch(() => {
-      console.log('Reviews request failed');
-    });
-  }, [props.book.id]);
 
   // POST a  review to a book
 
@@ -50,7 +43,7 @@ export default function BookDetails(props) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        book_id: props.book.id, // better using query here?
+        book_id: props.book.id,
 
         review: review,
       }),
@@ -77,7 +70,6 @@ export default function BookDetails(props) {
       }),
     });
 
-    const addBookResponseBody = await addBookResponse.json();
 
     if (addBookResponse.status === 400) {
       notAddedNotification();
@@ -90,6 +82,10 @@ export default function BookDetails(props) {
   }
   return (
     <div>
+      <Head>
+        <title> the bookclub || book </title>
+        <meta name="description" content="a social network for book lovers" />
+      </Head>
       <section>
         {' '}
         <h2 className="p-2 text-2xl text-center mt-20">
@@ -162,13 +158,26 @@ export default function BookDetails(props) {
                       setReview('');
                     }}
                   >
-                    Submit
+                    submit
                   </button>
                 </div>
               </>
             ) : (
               <div>
-                <p>please log in or register to write a review</p>
+                <p>
+                  please{' '}
+                  <span className="underline">
+                    <Link href={`/login?returnTo=/books/${props.book.id}`}>
+                      log in
+                    </Link>{' '}
+                  </span>
+                  or
+                  <span className="underline">
+                    {' '}
+                    <Link href="/register">register</Link>{' '}
+                  </span>{' '}
+                  to write a review
+                </p>
               </div>
             )}
           </div>
@@ -201,8 +210,17 @@ export default function BookDetails(props) {
             </div>
           ) : (
             <p>
-              please log in or register to see what other readers think about
-              this book
+              please{' '}
+              <span className="underline">
+                <Link href={`/login?returnTo=/books/${props.book.id}`}>
+                  log in
+                </Link>{' '}
+              </span>
+              or
+              <span className="underline">
+                <Link href="/register"> register</Link>
+              </span>{' '}
+              to see what other readers think about this book
             </p>
           )}
 
@@ -238,6 +256,10 @@ export async function getServerSideProps(context) {
 
   const book = await bookResponse.json();
 
+  const reviewsResponse = await getReviewsWithUsername(bookId);
+
+  const allReviews = await JSON.parse(JSON.stringify(reviewsResponse));
+
   const user = await getUserBySessionToken(context.req.cookies.sessionToken);
 
   if (user) {
@@ -245,6 +267,7 @@ export async function getServerSideProps(context) {
       props: {
         user: user,
         book: book,
+        allReviews: allReviews,
       },
     };
   }

@@ -1,5 +1,10 @@
 import Link from 'next/link';
 
+function Anchor({ children, ...restProps }) {
+  // using a instead of Link since we want to force a full refresh
+  return <a {...restProps}>{children}</a>;
+}
+
 export default function Header(props) {
   return (
     <header className="sticky top-0 bg-white">
@@ -28,9 +33,9 @@ export default function Header(props) {
               <li>
                 {' '}
                 {props.user && (
-                  <a href="/users/userProfile" className="text-base">
+                  <Link href="/users/userProfile" className="text-base">
                     {props.user.user.username}
-                  </a>
+                  </Link>
                 )}{' '}
               </li>
               <li>
@@ -38,9 +43,9 @@ export default function Header(props) {
               </li>
               {props.user ? (
                 <li>
-                  <a href="/logout" className="text-base ">
+                  <Anchor href="/logout" className="text-base">
                     logout
-                  </a>
+                  </Anchor>
                 </li>
               ) : (
                 <>

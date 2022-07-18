@@ -1,5 +1,6 @@
 import 'material-react-toastify/dist/ReactToastify.css';
 import { toast, ToastContainer } from 'material-react-toastify';
+import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import {
   getContactsByUserId,
@@ -52,7 +53,6 @@ export default function Readers(props) {
         connected_user_id: props.reader.id,
       }),
     });
-    const request = await response.json();
 
     if (response.status === 400) {
       alreadyRequested();
@@ -63,6 +63,10 @@ export default function Readers(props) {
 
   return (
     <>
+      <Head>
+        <title> the bookclub || {props.reader.username}'s reading room </title>
+        <meta name="description" content="a social network for book lovers" />
+      </Head>
       <section>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
           <div className="self-center">
@@ -100,6 +104,7 @@ export default function Readers(props) {
                         className="border border-black h-4/5 w-full mx-4 my-2 text-center"
                         id="review"
                         name="review"
+                        disabled
                         value={listItem.review}
                       />
                     </label>
