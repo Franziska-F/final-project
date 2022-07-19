@@ -14,6 +14,7 @@ export default async function handler(
 
     if (!token) {
       res.status(400).json({ errors: [{ message: 'No sessionToken passed' }] });
+      return;
     }
 
     // Get the user from the token
@@ -21,7 +22,9 @@ export default async function handler(
 
     if (!user) {
       res.status(400).json({ errors: [{ message: 'User not found' }] });
+      return;
     }
+
     // return the user
 
     res
