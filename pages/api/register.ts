@@ -18,7 +18,7 @@ export type RegisterResponseBody =
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<RegisterResponseBody>,
+  res: NextApiResponse,
 ) {
   if (
     typeof req.body.username !== 'string' ||
@@ -55,9 +55,9 @@ export default async function handler(
     const passwordHash = await bcrypt.hash(req.body.password, 12);
 
     // create new user in DB
-    const newUser = await createUser(req.body.username, passwordHash);
+    const newUser = await createUser(username, passwordHash);
 
-    const newUserProfil = await createUserProfile(
+    const newUserProfile = await createUserProfile(
       newUser.id,
       user.email,
       user.country,
@@ -77,6 +77,8 @@ export default async function handler(
       .status(200)
       .setHeader('set-Cookie', serializedCookie)
       .json({ user: { id: newUser.id } });
+
+    return res.status(200).json(newUserProfile);
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }

@@ -32,8 +32,6 @@ export default function BookDetails(props) {
   };
   // GET all reviews to one book
 
-
-
   // POST a  review to a book
 
   async function createReviewHandler() {
@@ -69,7 +67,6 @@ export default function BookDetails(props) {
         book_id: props.book.id,
       }),
     });
-
 
     if (addBookResponse.status === 400) {
       notAddedNotification();
@@ -190,7 +187,7 @@ export default function BookDetails(props) {
             see what other readers wrote about this book{' '}
           </h2>
           {props.user ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 px-8 ">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-8 px-8 ">
               {[...reviewsList]
                 .reverse()
 

@@ -158,7 +158,7 @@ export default function UserProfil(props: Props) {
   // POST friend (accept request)
 
   async function acceptRequest(connected_user_id: number) {
-    const response = await fetch(`../api/friends`, {
+    await fetch(`../api/friends`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -168,9 +168,7 @@ export default function UserProfil(props: Props) {
       }),
     });
 
-    const acceptRequestResponse = await response.json();
-
-    console.log('test', acceptRequestResponse);
+    // const acceptRequestResponse = await response.json();
 
     setFriends([...friends]);
   }

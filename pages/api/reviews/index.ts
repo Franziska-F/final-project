@@ -16,29 +16,19 @@ export default async function handler(
   // get all reviews for one book
 
   if (req.method === 'GET') {
-    // const bookId = req.query.bookid;
+    const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
+
     const id = req.query.userid as string;
 
     const userId = Number(id);
 
-    // (req.method === 'GET')
-
-    // if (bookId) {
-    // const allReviewsToBook = await getReviewsByBookId(bookId);
-
-    // return res.status(200).json(allReviewsToBook);
-
-    //  const allReviewsWithUsername = await getReviewsWithUsername(bookId);
-
-    //  return res.status(200).json(allReviewsWithUsername);
-    // }
-
-    // GET-request to display all reviews // of a user at first render in userProfile
-
     if (userId) {
-      // if (req.method === 'GET') {
-      // const user = await getUserBySessionToken(req.cookies.sessionToken);
-
       const allReviewsOfUser = await getReviewsByUserId(userId);
 
       return res.status(200).json(allReviewsOfUser);

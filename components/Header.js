@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 function Anchor({ children, ...restProps }) {
-  // using a instead of Link since we want to force a full refresh
+  // using a instead of Link  to force a full refresh
   return <a {...restProps}>{children}</a>;
 }
 
@@ -12,7 +12,7 @@ export default function Header(props) {
         <h1 className="basis-1/4 text-2xl">the bookclub</h1>
 
         <img
-          className="md:hidden"
+          className=" md:hidden"
           src="/img/icon.jpg"
           alt="black and white drawing of an upright standing book with the letters b and c at the cover"
         />

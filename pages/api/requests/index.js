@@ -9,6 +9,12 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
 
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
+
     const pendingRequests = await getReadersWithUsername(user.id);
     // const pendingRequests = await getConnectedUserByUserId(user.id);
 
@@ -17,6 +23,12 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
 
     const request = await RequestByIds(user.id, req.body.connected_user_id);
 

@@ -1,21 +1,35 @@
 import {
   deleteReviewById,
   getReviewsByBookId,
+  getUserBySessionToken,
   updateReview,
 } from '../../../util/database';
 
 export default async function handler(req, res) {
-  //  res.status(200).json(req.query);
-
   if (req.method === 'GET') {
+    const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
+
     const bookId = req.query;
 
-     const allReviewsToBook = await getReviewsByBookId(bookId);
-     return res.status(200).json(allReviewsToBook);
-
+    const allReviewsToBook = await getReviewsByBookId(bookId);
+    return res.status(200).json(allReviewsToBook);
   }
 
   if (req.method === 'DELETE') {
+    const user = await getUserBySessionToken(req.cookies.sessionToken);
+
+    if (!user) {
+      return res.status(400).json({
+        error: 'Session token not valid',
+      });
+    }
+
     const reviewId = req.query;
 
     const deleteById = await deleteReviewById(reviewId.reviewId);

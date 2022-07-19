@@ -3,7 +3,6 @@ import { getUserBySessionToken } from '../../util/database';
 
 // type of response is either object with an error property that contains an array of objects with messages or user id
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
