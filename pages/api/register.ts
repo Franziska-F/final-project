@@ -20,6 +20,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+
+   if (req.method === 'POST') {
   if (
     typeof req.body.username !== 'string' ||
     typeof req.body.password !== 'string' ||
@@ -33,9 +35,9 @@ export default async function handler(
   }
   // check method, only POST allowed
 
-  if (req.method === 'POST') {
+
     if (await getUserByUserName(req.body.username)) {
-      res.status(400).json({
+      res.status(401).json({
         errors: [
           { message: 'username alredy exist, please choose different name' },
         ],
@@ -57,7 +59,7 @@ export default async function handler(
     // create new user in DB
     const newUser = await createUser(username, passwordHash);
 
-    const newUserProfile = await createUserProfile(
+    await createUserProfile(
       newUser.id,
       user.email,
       user.country,
@@ -78,7 +80,7 @@ export default async function handler(
       .setHeader('set-Cookie', serializedCookie)
       .json({ user: { id: newUser.id } });
 
-    return res.status(200).json(newUserProfile);
+
   } else {
     res.status(405).json({ errors: [{ message: 'method not allowed' }] });
   }

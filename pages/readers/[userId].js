@@ -131,7 +131,7 @@ export default function Readers(props) {
                 <h4>{props.contacts.email}</h4>
               </div>
               <div className="text-center">
-                <h2 className="my-1"> {props.reader.username}'friends</h2>
+                <h2 className="my-1"> {props.reader.username}'s friends</h2>
                 {props.friends.map((item) => {
                   return <h4 key={item.id}>{item.username}</h4>;
                 })}
