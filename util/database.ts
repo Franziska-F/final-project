@@ -1,6 +1,8 @@
 import { config } from 'dotenv';
 import postgres from 'postgres';
+import setPostgresDefaultsOnHeroku from './setPostgresDefaultsOnHeroku';
 
+setPostgresDefaultsOnHeroku();
 config();
 // Type needed for the connection function below
 declare module globalThis {
