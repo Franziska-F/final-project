@@ -83,11 +83,13 @@ export default function Register(props: Props) {
           className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-1/3 m-4"
           id="password"
           placeholder="password"
+          type="password"
           value={password}
           onChange={(event) => {
             setPassword(event.currentTarget.value);
           }}
         />
+        
       </div>
       <div className="flex items-center flex-col">
         <label htmlFor="location">location</label>
