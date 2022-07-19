@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import Image from 'next/image';
 import { useState } from 'react';
 
 export default function Home() {
@@ -88,16 +87,11 @@ export default function Home() {
             <p>search for books and put them on your bookstack</p>
           </div>
           <div>
-            <Image
-              src="/img/reading.jpeg"
-              alt="drawing of a reading person"
-              width="750"
-              height="750"
-            />
+            <img src="/img/reading.jpg" alt="drawing of a reading person" />
           </div>
           <div>
             <img
-              src="/img/write.jpeg"
+              src="/img/write.jpg"
               alt="drawing of a person writing on a notebook"
             />
           </div>
@@ -117,7 +111,7 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <img src="/img/connect.jpeg" alt="drawing of two people taking" />
+            <img src="/img/connect.jpg" alt="drawing of two people taking" />
           </div>
         </div>
       </section>

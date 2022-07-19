@@ -76,7 +76,7 @@ export default function Readers(props) {
           </div>
           <div className="max-w-2xl max-h-2xl">
             <img
-              src="../img/reading_room.jpeg"
+              src="../img/reading_room.jpg"
               alt="drawing of a cosy room with a chair, a window, a small table and a bookshelf"
               className="w-full"
             />

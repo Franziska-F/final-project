@@ -186,7 +186,7 @@ export default function UserProfil(props: Props) {
       <section className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-20 mt-10">
         <div>
           <img
-            src="../img/book_stack.jpeg"
+            src="../img/book_stack.jpg"
             alt="drawing of a stack of books"
             className="w-full"
           />
