@@ -71,7 +71,7 @@ export default function Readers(props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-8 px-10 ">
           <div className="self-center">
             <h3 className="text-center text-2xl mt-10 md:mt-0">
-              wellcome to {props.reader.username}'s reading room
+              welcome to {props.reader.username}'s reading room
             </h3>
           </div>
           <div className="max-w-2xl max-h-2xl">

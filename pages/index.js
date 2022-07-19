@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div>
       <Head>
-        <title> the bookclub || wellcome </title>
+        <title> the bookclub || welcome </title>
         <meta name="description" content="a social network for book lovers" />
       </Head>
       <h1 className="text-3xl font-bold font-main my-10 text-center">
@@ -117,10 +117,7 @@ export default function Home() {
             </p>
           </div>
           <div>
-            <img
-              src="public/img/connect.jpeg"
-              alt="drawing of two people taking"
-            />
+            <img src="/img/connect.jpeg" alt="drawing of two people taking" />
           </div>
         </div>
       </section>
