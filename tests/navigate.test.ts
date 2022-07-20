@@ -40,5 +40,5 @@ test('test', async ({ page }) => {
     'http://localhost:3000/login?returnTo=/books/C5upAAAACAAJ',
   );
   // Click text=put on your bookstack
-  await page.locator('text=put on your bookstack').click();
+  await page.locator('button:has-text("put on your bookstack")').click();
 });
