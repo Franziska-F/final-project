@@ -36,7 +36,9 @@ test('test', async ({ page }) => {
   await page.locator('[placeholder="password"]').fill('aaa');
   // Click button:has-text("login")
   await page.locator('button:has-text("login")').click();
-  await expect(page).toHaveURL('http://localhost:3000/books/C5upAAAACAAJ');
+  // await expect(page).toHaveURL(
+  //   'http://localhost:3000/login?returnTo=/books/C5upAAAACAAJ',
+  // );
   // Click text=put on your bookstack
   await page.locator('text=put on your bookstack').click();
 });
