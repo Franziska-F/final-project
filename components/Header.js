@@ -9,7 +9,7 @@ export default function Header(props) {
   return (
     <header className="sticky top-0 bg-white">
       <div className="flex flex-row items-center text-base pt-4 px-4 border-b border-black">
-        <h1 className="basis-1/4 text-2xl">the bookclub</h1>
+        <h1 className="basis-1/4 text-2xl hidden md:flex">the bookclub</h1>
 
         <img
           className=" md:hidden"

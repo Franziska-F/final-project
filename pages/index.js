@@ -30,7 +30,7 @@ export default function Home() {
       <section className="py-10 flex justify-center flex-nowrap">
         <div className="py-2 flex flex-nowrap w-2/3">
           <input
-            className=" border border-black rounded focus:border-blue-400 py-2 px-3 w-2/3 mx-8"
+            className="border border-black rounded focus:border-blue-400 py-2 px-3 w-2/3 mx-8"
             placeholder="Search for a book"
             onChange={(event) => {
               const title = event.currentTarget.value;
