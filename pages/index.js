@@ -82,35 +82,35 @@ export default function Home() {
       </section>
       <section className="pb-10 p-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 flex justify-center items-center">
-          <div className="text-center">
+          <div className="text-center order-1">
             <p className="text-3xl font-bold  my-10 ">read</p>
             <p>search for books and put them on your bookstack</p>
           </div>
-          <div>
+          <div className=" order-2">
             <img src="/img/reading.jpg" alt="drawing of a reading person" />
           </div>
-          <div>
+          <div className="order-4 md:order-3">
             <img
               src="/img/write.jpg"
               alt="drawing of a person writing on a notebook"
             />
           </div>
-          <div>
-            <p className="text-3xl font-bold  my-10 text-center ">write</p>
+          <div className="order-3 md:order-4">
+            <p className="text-3xl font-bold  my-10 text-center">write</p>
             <p className="text-center">
               loved a book? impressed? didn't like it? write your thoughts down
               and share them with other readers.{' '}
             </p>
           </div>
 
-          <div className="text-center">
+          <div className="text-center order-5">
             <p className="text-3xl font-bold font-main my-10 ">connect</p>
             <p>
               find other readers who love the same book as you and connect with
               them{' '}
             </p>
           </div>
-          <div>
+          <div className="order-6">
             <img src="/img/connect.jpg" alt="drawing of two people taking" />
           </div>
         </div>
