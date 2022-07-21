@@ -42,7 +42,7 @@ export default function Home() {
             className=" bg-black w-1/3 text-white rounded"
             onClick={() => handleSearch()}
           >
-            Search
+            search
           </button>
         </div>
       </section>
